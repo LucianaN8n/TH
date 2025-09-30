@@ -1,0 +1,8 @@
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "frame-ancestors 'self' https://*.wix.com https://*.wixsite.com https://*.editorx.io https://*.filesusr.com https://hotmart.com https://*.hotmart.com https://app.hotmart.com https://club.hotmart.com https://www.ath.org.br https://ath.org.br"
+    X-Frame-Options = ""
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Content-Type-Options = "nosniff"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"

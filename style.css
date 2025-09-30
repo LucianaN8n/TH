@@ -1,0 +1,4 @@
+body { font-family: Arial, sans-serif; margin:20px; }
+textarea { display:block; width:100%; margin:6px 0; }
+#parecerBox { white-space: pre-wrap; overflow: visible; max-height: none; border:1px solid #ccc; padding:10px; margin-top:10px; }
+#chatAnswer { white-space: pre-wrap; margin-top:8px; border:1px dashed #cbd5e1; padding:8px; border-radius:8px; background:#f8fafc; }

@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Seu Mentor — Parecer do Gestor</title>
+  <style>
+    :root{--bg:#f7faf9;--fg:#0f2825;--muted:#5f6b68;--brand:#1b6b64;--line:#e6eeec}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue","Noto Sans",Arial}
+    .wrap{max-width:1080px;margin:0 auto;padding:20px}
+    h1{margin:4px 0 16px;font-size:22px}
+    h2{margin:0 0 12px;font-size:18px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px}
+    label{display:block;margin:10px 0 6px;font-weight:600}
+    input,textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:12px;background:#fff}
+    textarea{min-height:84px;resize:vertical}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    .btn{appearance:none;border:0;border-radius:12px;padding:10px 14px;font-weight:600;cursor:pointer}
+    .primary{background:var(--brand);color:#fff}
+    .ghost{background:#eef6f5;color:var(--brand)}
+    .muted{color:var(--muted);font-size:13px}
+    .out{white-space:pre-wrap}
+    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+
+    /* --- PDF friendly layout --- */
+    .report {
+      max-width: 172mm;
+      margin: 0 auto;
+      padding: 0;
+      color: #111;
+      font: 12pt/1.35 system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      text-align: left;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    .report h1 { font-size: 16pt; margin: 0 0 10pt; font-weight: 700; }
+    .report h2 { font-size: 13pt; margin: 16pt 0 6pt; font-weight: 700; }
+    .report h3 { font-size: 12.5pt; margin: 12pt 0 6pt; font-weight: 600; }
+    .report p,
+    .report li,
+    .report .ans {
+      margin: 0 0 6pt;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      letter-spacing: normal;
+      text-align: left;
+    }
+    .report ul { margin: 0 0 6pt 0; padding-left: 16pt; list-style: disc; }
+    .report .row { display: block; margin: 0 0 6pt; }
+    .report .badge { font-weight: 600; }
+    .report .section { page-break-inside: avoid; }
+    .report .muted { color:#444; }
+
+    .no-print { display: inline-flex; gap: 10px; }
+
+    @page { size: A4; margin: 16mm 14mm 18mm 18mm; }
+    @media print {
+      html, body { margin:0; padding:0; background:#fff; }
+      .grid > .card:first-child, .no-print, .muted, .wrap > h1 { display:none !important; }
+      .grid { display:block; }
+      .grid > .card:last-child { border:0; padding:0; }
+      #pdf-root { max-width: unset; width:auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Seu Mentor Psicanalista — Parecer do Gestor</h1>
+
+    <div class="grid">
+      <!-- Anamnese -->
+      <section class="card">
+        <h2>Anamnese dinâmica</h2>
+
+        <div class="row">
+          <div>
+            <label>Nome do cliente</label>
+            <input id="cli" placeholder="Ex.: Maria Aparecida Souza"/>
+          </div>
+          <div>
+            <label>Nome do terapeuta</label>
+            <input id="ter" placeholder="Ex.: Luciana"/>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Data de nascimento</label>
+            <input id="nasc" placeholder="AAAA-MM-DD"/>
+          </div>
+          <div>
+            <label>Tempo de sintomas</label>
+            <input id="tempo" placeholder="Ex.: > 6 meses"/>
+          </div>
+        </div>
+
+        <label>Queixa principal</label>
+        <input id="queixa" placeholder="Ex.: Ansiedade, episódios de pânico"/>
+
+        <label>1) Teve algum acontecimento marcante perto dessa época?</label>
+        <textarea id="q1" placeholder="Trabalho, família, saúde…"></textarea>
+
+        <label>2) De que forma esse problema atrapalha sua rotina hoje?</label>
+        <textarea id="q2" placeholder="Impacto em sono, foco, relações…"></textarea>
+
+        <label>3) Se tivesse que dar um nome pra esse incômodo (tipo 'nó', 'peso', 'fogo'), qual seria?</label>
+        <textarea id="q3" placeholder="Nome simbólico dado pelo paciente"></textarea>
+
+        <label>4) O que surge no corpo nos 2–3 minutos anteriores (respiração/peito/estômago/tensão)?</label>
+        <textarea id="q4" placeholder="Sinais corporais imediatos"></textarea>
+
+        <label>5) O que você gostaria de conseguir fazer mais, se esse problema diminuísse?</label>
+        <textarea id="q5" placeholder="Metas/aspirações comportamentais"></textarea>
+
+        <label>Observações/Respostas (livre)</label>
+        <textarea id="obs" placeholder="Palavras-chave úteis, gatilhos, medicações, contexto…"></textarea>
+
+        <div class="btns no-print">
+          <button class="btn primary" id="aplicar">Aplicar &amp; Prosseguir</button>
+          <button class="btn ghost" id="preview">Pré-visualizar</button>
+          <button class="btn ghost" id="pdf">Gerar PDF</button>
+        </div>
+        <div class="muted" id="status"></div>
+      </section>
+
+      <!-- Parecer / PDF -->
+      <section class="card">
+        <div id="pdf-root" class="report" aria-label="Parecer do Gestor (PDF)">
+          <h1 id="titulo-relatorio">Parecer do Gestor — <span id="nome-cliente"></span></h1>
+          <div class="row muted">
+            Terapeuta: <span id="nome-terapeuta" class="badge"></span> &nbsp;&nbsp;|&nbsp;&nbsp;
+            Nascimento: <span id="nascimento" class="badge"></span> &nbsp;&nbsp;|&nbsp;&nbsp;
+            Tempo de sintomas: <span id="tempo-span" class="badge"></span>
+          </div>
+
+          <h2>Síntese dinâmica</h2>
+          <ul class="section" id="sintese-list">
+            <li>Queixa central: <span id="qx" class="ans"></span></li>
+            <li>Fatos marcantes: <span id="fatos" class="ans"></span></li>
+            <li>Impacto atual: <span id="impacto" class="ans"></span></li>
+            <li>Nome dado ao incômodo: <span id="nome-inc" class="ans"></span></li>
+            <li>Resposta corporal: <span id="corpo" class="ans"></span></li>
+            <li>Metas: <span id="metas" class="ans"></span></li>
+          </ul>
+
+          <h2>Leitura psicanalítica (eixos)</h2>
+          <ul class="section" id="eixos-list"></ul>
+
+          <h2>Intervenções & módulos (psicanálise → protocolos holísticos)</h2>
+          <ol class="section" id="intervencoes-list"></ol>
+
+          <h2>Plano de ação (30 dias)</h2>
+          <h3>Semana 1 — Regulação & linguagem do corpo</h3>
+          <ul id="semana1"></ul>
+          <h3>Semana 2 — Exposição graduada & recurso</h3>
+          <ul id="semana2"></ul>
+          <h3>Semana 3 — Crenças & autonomia</h3>
+          <ul id="semana3"></ul>
+          <h3>Semana 4 — Prevenção de recaída</h3>
+          <ul id="semana4"></ul>
+
+          <h2>Indicação de estudos (módulos do curso)</h2>
+          <ul id="modulos-list"></ul>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    "use strict";
+
+    const $ = s => document.querySelector(s);
+    const V = id => (document.getElementById(id).value || "").trim();
+    const setStatus=(t,e)=>{const el=$("#status"); el.textContent=t; el.style.color=e?'#9b1c1c':'#5f6b68'};
+
+    function T(nome, micro, grupo){ return {nome, micro, grupo}; }
+    const TEC = [
+      T("Psicanálise Clínica", "Associação livre guiada na queixa; pontuar defesa predominante; diferenciar desejo×medo×ideal.", "psicanalise"),
+      T("Psicanálise da Mulher e Infantil", "Ler papéis/rituais do ciclo (ou técnica lúdica) e nomear demandas de cuidado/limite.", "psicanalise"),
+      T("Terapia dos Sonhos", "Diário onírico + pergunta central: o que este sonho diz de mim hoje?", "psicanalise"),
+      T("Crise de Pânico e Ansiedade", "Cartão de crise: respiração 4-4-6 (5 ciclos) + grounding 5-4-3-2-1; registrar antes/depois (0–10).", "holistico"),
+      T("Terapia Cognitivo Comportamental", "RPD: Situação→Pensamento→Emoção→Comportamento; evidências; nova formulação funcional.", "holistico"),
+      T("PNL - Programação Neurolinguística", "Instalar âncora de recurso (toque+respiração) e aplicar antes de gatilhos.", "holistico"),
+      T("EFT - Liberação Emocional", "Tapping curto, nomeando emoção (0–10) até reduzir ≥2.", "holistico"),
+      T("Crenças Limitantes", "Listar 3 crenças e reescrevê-las em formulações operacionais + micro-experimentos.", "holistico"),
+      T("Psicoaromaterapia", "Respiração em aroma leve (lavanda/laranja) 3 min associada à segurança.", "holistico"),
+      T("Psicossomática", "Diário corpo↔emoção: evento→emoção→local do corpo→resposta eficaz.", "holistico"),
+      T("Hipnose Clínica", "Indução breve de relaxamento + ensaio mental do comportamento-alvo (ético).", "holistico"),
+      T("Cromoterapia", "Banho de cor ambiente (luz suave) durante respiração noturna.", "holistico"),
+      T("Terapia Ortomolecular", "Educação/encaminhamento responsável quando pertinente (não prescritivo).", "holistico"),
+      T("Homeopatia", "Observação com profissional habilitado; registro de humor/respostas (não prescritivo).", "holistico"),
+      T("Nutrição Holística", "Regra dos 10 minutos (adiar impulso) + água + lanche proteico programado.", "holistico"),
+      T("Bases da Medicina Germânica", "Mapa teórico de reflexão (não substitui diagnóstico/tratamento).", "holistico"),
+      T("Fitoterapia", "Estudo e diário de tolerância/efeitos com orientação (não prescritivo).", "holistico"),
+      T("Auriculoterapia", "Pressão leve diária em ponto relaxante (quando habilitado) + registro de efeito.", "holistico"),
+      T("Massagem com Oléos Essenciais", "Auto-massagem leve (ombros/pescoço) + respiração 4-4-6 por 2–3 min.", "holistico"),
+      T("Ayurveda", "Rotina âncora: horários estáveis de sono + água morna ao acordar.", "holistico"),
+      T("Introdução à MTC", "Alongamento suave de meridianos doloridos (ashi) 2x/dia (30–45s).", "holistico"),
+      T("Reflexologia", "Auto-estimulação de pontos de relaxamento 3–5 min/dia.", "holistico"),
+      T("Terapia Quântica", "Respiração coerente 5–5 (5 min) com foco em segurança/gratidão.", "holistico"),
+      T("Divórcio Energético", "Ritual escrito de desligamento + perdão compassivo (sem envio) + micro-ação de autocuidado.", "holistico"),
+      T("Feng Shui", "Micro-ajuste ambiental: área de trabalho/entrada com ordem, luz e planta viva.", "holistico"),
+      T("Numerologia", "Explorar ciclos/ano pessoal como recurso de sentido (diário de insight).", "holistico"),
+      T("Cristaloterapia e Chakras", "Aterramento com hematita/turmalina durante respiração por 3 min.", "holistico"),
+      T("Psicofloralterapia", "Registro de humor associado a floral utilizado (estudo/observação).", "holistico"),
+      T("Ciência da Felicidade", "3 gratidões/dia + 1 gentileza/semana; monitorar humor 0–10.", "holistico"),
+      T("Radiestesia", "Uso observacional/educativo (registro).", "holistico")
+    ];
+
+    function getData(){
+      return {
+        cli: (document.getElementById('cli').value||'').trim(),
+        ter: (document.getElementById('ter').value||'').trim(),
+        nasc: (document.getElementById('nasc').value||'').trim(),
+        tempo: (document.getElementById('tempo').value||'').trim(),
+        queixa: (document.getElementById('queixa').value||'').trim(),
+        q1: (document.getElementById('q1').value||'').trim(),
+        q2: (document.getElementById('q2').value||'').trim(),
+        q3: (document.getElementById('q3').value||'').trim(),
+        q4: (document.getElementById('q4').value||'').trim(),
+        q5: (document.getElementById('q5').value||'').trim(),
+        obs: (document.getElementById('obs').value||'').trim()
+      };
+    }
+
+    function escolherTecnicas(d){
+      const txt = [d.queixa,d.q1,d.q2,d.q3,d.q4,d.q5,d.obs].join(" ").toLowerCase();
+      const has = (...k)=> k.some(s=> txt.includes(s));
+      const pick = [];
+
+      pick.push("Psicanálise Clínica","Psicanálise da Mulher e Infantil","Terapia dos Sonhos");
+
+      if (has("pânico","panico","ansiedade","agorafobia","taquicardia","falta de ar")){
+        pick.push("Crise de Pânico e Ansiedade","Terapia Cognitivo Comportamental","EFT - Liberação Emocional","Psicoaromaterapia","Auriculoterapia","Ciência da Felicidade");
+      }
+      if (has("não consigo sair de casa","nao consigo sair de casa","evitar","evitação")){
+        pick.push("Terapia Cognitivo Comportamental","PNL - Programação Neurolinguística");
+      }
+      if (has("problemas financeiros","não vejo saída","nao vejo saida","sem saída","desesperança","impotência","impotencia")){
+        pick.push("Crenças Limitantes","Ciência da Felicidade","Feng Shui");
+      }
+      if (has("gastrite","estômago","estomago","refluxo","intestino","pele","enxaqueca","respira")){
+        pick.push("Psicossomática","Ayurveda","Nutrição Holística");
+      }
+
+      pick.push("Terapia Quântica","Cristaloterapia e Chakras");
+
+      const uniq = [];
+      pick.forEach(n => {
+        const t = TEC.find(x=>x.nome===n);
+        if (t && !uniq.some(u=>u.nome===t.nome)) uniq.push(t);
+      });
+      return uniq.slice(0, 12);
+    }
+
+    function preencherPDF(d, tecs){
+      const id = s => document.getElementById(s);
+      id('nome-cliente').textContent = d.cli || '';
+      id('nome-terapeuta').textContent = d.ter || '';
+      id('nascimento').textContent = d.nasc || '—';
+      id('tempo-span').textContent = d.tempo || '—';
+
+      id('qx').textContent = d.queixa || '—';
+      id('fatos').textContent = d.q1 || '—';
+      id('impacto').textContent = d.q2 || '—';
+      id('nome-inc').textContent = d.q3 || '—';
+      id('corpo').textContent = d.q4 || '—';
+      id('metas').textContent = d.q5 || '—';
+
+      const eixos = [];
+      if ((d.q2||'').toLowerCase().includes('não consigo sair') || (d.queixa||'').toLowerCase().includes('pânico') || (d.queixa||'').toLowerCase().includes('ansiedade')){
+        eixos.push('Evitação/medo de exposição → trabalhar dose e simbolização da angústia (exposição graduada + nomeação do afeto).');
+      }
+      if ((d.q1||'').toLowerCase().includes('financ') || (d.q2||'').toLowerCase().includes('não vejo saída') || (d.q2||'').toLowerCase().includes('nao vejo saida')){
+        eixos.push('Crenças de impotência/desesperança → localizar “eu digo de mim” vs. ideal; ajustar metas possíveis.');
+      }
+      if ((d.q4||'').toLowerCase().match(/taquicardia|falta de ar|respira/)){
+        eixos.push('Somatização da angústia (peito/respiração) → dar linguagem ao corpo; treino de regulação para sustentar a fala.');
+      }
+      if (!eixos.length){
+        eixos.push('Eixos gerais: estabilizar (regular), simbolizar (dar sentido ao corpo/imagens), elaborar (crenças/defesas) e retomar a agência (micro-ações).');
+      }
+      const eixosUl = id('eixos-list'); eixosUl.innerHTML='';
+      eixos.forEach(t=>{ const li=document.createElement('li'); li.className='ans'; li.textContent=t; eixosUl.appendChild(li); });
+
+      const ol = id('intervencoes-list'); ol.innerHTML='';
+      tecs.forEach((t)=>{
+        const li = document.createElement('li');
+        li.className='ans';
+        li.textContent = `${t.micro} — ${t.nome}`;
+        ol.appendChild(li);
+      });
+
+      const s1=[
+        'Cartão de crise 4-4-6 (5 ciclos) + grounding 5-4-3-2-1; registro antes/depois (0–10).',
+        'Associação livre 1x/sem (tema: medo atual) + diário de sensações/palavras.'
+      ];
+      const s2=[
+        'Escolher 1 situação evitada → 3 micro-passos (ex.: calçada → esquina → mini compra).',
+        'Aplicar âncora (PNL) antes de cada passo.'
+      ];
+      const s3=[
+        'Crença central → 3 alternativas; 2 micro-ações/dia.',
+        'Reforçar evidências contra catastrofismo após cada passo.'
+      ];
+      const s4=[
+        'Plano sinal→resposta rápida; carta de avanços; check-in semanal estruturado.'
+      ];
+      const fill=(idList,arr)=>{ const ul=id(idList); ul.innerHTML=''; arr.forEach(t=>{const li=document.createElement('li'); li.className='ans'; li.textContent=t; ul.appendChild(li);}); };
+      fill('semana1', s1); fill('semana2', s2); fill('semana3', s3); fill('semana4', s4);
+
+      const modsUl = id('modulos-list'); modsUl.innerHTML='';
+      const ps = tecs.filter(t=>t.grupo==='psicanalise').map(t=>t.nome);
+      const ho = tecs.filter(t=>t.grupo==='holistico').map(t=>t.nome);
+      const modLines = [];
+      if (ps.length) modLines.push('Eixo analítico: '+ps.join(', '));
+      if (ho.length) modLines.push('Protocolos holísticos: '+ho.join(', '));
+      modLines.forEach(x=>{ const li=document.createElement('li'); li.className='ans'; li.textContent=x; modsUl.appendChild(li); });
+    }
+
+    function render(){
+      const d = getData();
+      const tecs = escolherTecnicas(d);
+      preencherPDF(d, tecs);
+      return d;
+    }
+
+    document.getElementById('aplicar').addEventListener('click', ()=>{
+      const d = render();
+      if (!d.cli || !d.queixa) setStatus('Preencha ao menos nome do cliente e queixa.', true);
+      else setStatus('Parecer aplicado.');
+    });
+    document.getElementById('preview').addEventListener('click', ()=>{ render(); setStatus('Pré-visualização atualizada.'); });
+    document.getElementById('pdf').addEventListener('click', ()=>{
+      render();
+      requestAnimationFrame(()=> setTimeout(()=> window.print(), 30));
+    });
+
+  })();
+  </script>
+</body>
+</html>

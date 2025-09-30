@@ -1,0 +1,8 @@
+/*
+  Content-Security-Policy: frame-ancestors 'self' https://*.wix.com https://*.wixsite.com https://*.editorx.io https://*.wixapps.net https://*.wixapp.com https://*.ath.org.br https://app.hotmart.com https://club.hotmart.com https://*.hotmart.com;
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Content-Type-Options: nosniff
+/*
+  Content-Security-Policy: frame-ancestors 'self' https://*.wix.com https://*.wixsite.com https://*.editorx.io https://*.wixapps.net https://*.wixapp.com https://*.ath.org.br https://app.hotmart.com https://club.hotmart.com https://*.hotmart.com;
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Content-Type-Options: nosniff

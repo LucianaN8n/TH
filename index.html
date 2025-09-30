@@ -1,0 +1,88 @@
+<script>
+function buildPrompt(){
+  const v = sel => (document.querySelector(sel).value || '').trim();
+
+  // helper opcional: idade aproximada
+  function calcAge(iso){
+    if(!iso) return '—';
+    const d = new Date(iso);
+    if(isNaN(d)) return '—';
+    const diff = Date.now() - d.getTime();
+    const age = new Date(diff).getUTCFullYear() - 1970;
+    return age + ' anos';
+  }
+
+  const dados = {
+    nome: v('#nome') || '—',
+    terapeuta: v('#terapeuta') || '—',
+    nasc: v('#nascimento') || '—',
+    idade: calcAge(v('#nascimento')),
+    queixa: v('#queixa') || '—',
+    tempo: v('#tempo') || '—',
+    impacto: v('#impacto') || '—',
+    obs: v('#obs') || '—',
+  };
+
+  /*  ESTILO DO RELATÓRIO (modelo “Luciana”)
+      Gera primeiro um “Relatório de Atendimento” com sub-roteiro (manejo, indicadores 4–6 semanas, plano de ação)
+      e depois um “Parecer do Gestor” profundo, em blocos.
+      Cada bloco começa com ### para o renderizador quebrar certinho em cartões/pdf.
+  */
+  return `
+Você é mentor(a) clínico(a) especilizado em psicanaálise e terapias holísticas de alta performmance. Escreva em **MARKDOWN**, com **títulos iniciados por "###"** (cada título = um bloco).
+Estilo: clínico, claro e humano; frases longas (6–10 linhas); nada de enfeite; não invente dados.
+
+Dados do caso
+- Cliente: ${dados.nome}
+- Terapeuta: ${dados.terapeuta}
+- Nascimento: ${dados.nasc} • Idade: ${dados.idade}
+- Queixa principal: ${dados.queixa}
+- Tempo de sintomas: ${dados.tempo}
+- Impacto/Efeitos: ${dados.impacto}
+- Observações: ${dados.obs}
+
+### Relatório de Atendimento — (defina o foco terapêutico de forma coerente, ex.: Psicanálise (foco) / TCC (foco))
+Escreva cabeçalho compacto no primeiro parágrafo: cliente, idade, data de nascimento (se houver), população etária apropriada (ex.: Adulto maduro / Envelhecimento), queixas e intensidade/tempo se possíveis a partir dos dados. Mantenha 3–5 linhas.
+
+### Sub-roteiro — População (derivar da idade e contexto)
+**Manejo prioritário**
+- Liste 3–6 orientações práticas de manejo de sessão e enquadre técnico.
+
+**Indicadores de progresso (4–6 semanas)**
+- De 4 a 6 marcadores observáveis (frequência, intensidade, duração, engajamento, rotina, sono, rede).
+
+**Plano de Ação**
+1) Objetivo clínico central (1–2 frases).
+2) Método/abordagem (ex.: psicanálise centrada, TCC, mentalização…), com 1–6 linhas de como conduzir.
+3) Indicadores de que está funcionando (3 itens).
+
+### Parecer do Gestor — Síntese do caso
+Em 4–8 bullets: quadro geral, impacto funcional, fatores somáticos/psicológicos/relacionais e atenção imediata (se houver).
+
+### Parecer do Gestor — Pontos de formulação
+- Mostre o encadeamento do problema (gatilhos/condições, padrões que mantêm, efeitos).
+- Se fizer sentido, integre um mini 5Ps em 4–8 linhas (predisponentes, precipitantes, perpetuadores, protetores, padrão atual).
+
+### Parecer do Gestor — Intervenções prioritárias
+Liste 3–6 frentes, cada uma com **micro-protocolos práticos** (passo a passo + frequência/duração):
+1) Psicanálise/Processo reflexivo (ou foco escolhido)
+2) TCC (reestruturação, exposição graduada, TDR/experimentos)
+3) Regulação somática (respiração guia, grounding, relaxamento)
+4) Rotina & Sono (higiene do sono e limites), mostre o que está oculto no comportamento do paciente
+5) Rede/recursos/psicoeducação (mensagens-chave simples)
+6) Se necessário, avaliação médica para comorbidades/medicação
+
+### Parecer do Gestor — Riscos/alertas
+- Bandeiras vermelhas a monitorar conforme o caso.
+- **Se houver ideação ou comportamento suicida**: oriente **encaminhamento IMEDIATO** ao psiquiatra e/ou serviço de emergência e descreva 3 passos práticos (ex.: contato da rede, SAMU/192, acompanhamento).
+
+### Parecer do Gestor — Próximos passos e acompanhamento
+- Agenda de sessões e reavaliação (4–6 semanas), critérios de ajuste e de alta, combinação de tarefas/recursos.
+
+Formatação:
+- Use bullets sempre que possível; parágrafos curtos (≤4 linhas).
+- Evite tabelas longas.
+  `;
+}
+
+</script>
