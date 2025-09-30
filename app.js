@@ -8,7 +8,9 @@
     intensidade: $("#intensidade"), queixa: $("#queixa"), tempo: $("#tempo"),
     efeitos: $("#efeitos"), modo: $("#modo"),
     btnGerar: $("#btnGerar"), btnReset: $("#btnReset"), btnPDF: $("#btnPDF"),
-    report: $("#report")
+    report: $("#report"),
+    btnSalvarModelo: $("#btnSalvarModelo"), selModelos: $("#selModelos"),
+    btnCSV: $("#btnCSV")
   };
   const must=(x)=>String(x||"").trim();
   const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
@@ -41,25 +43,25 @@
     estudos_foco:["PNL – Programação Neurolinguística","Mindfulness – Atenção Plena","Chakras","Cristaloterapia"],
     projeção:["Projeção Astral","Leitura da Alma","Registros akáshicos","Anjos de Cura"]
   };
-  // técnicas corporais (bloqueadas no modo online)
   const CORPORAIS = new Set(["Reflexologia Podal","Ventosaterapia","Moxaterapia","Massagem com óleos essenciais","Auriculoterapia"]);
 
   const KEYMAP = [
     {rx:/ansiedad|p[aâ]nico|nervos|agita[cç][aã]o/i, key:"ansiedade"},
     {rx:/ins[oô]ni|insoni|sono|acordar/i, key:"insonia"},
     {rx:/dor|lombar|cervic|tens|m[uú]sc|costas|ombro/i, key:"dor"},
-    {rx:/gastrit|reflux|est[oô]m|digest|azia|n[aá]usea/i, key:"digestivo"},
+    {rx:/gastrit|reflux|est[oô]m|digest|azia|n[aá]usea|c[oó]lica/i, key:"digestivo"},
     {rx:/cefale|enxaquec|cabe[çc]a/i, key:"cefaleia"},
-    {rx:/depress|apatia|anhedoni/i, key:"depressao"},
+    {rx:/depress|apatia|anhedoni|tristeza/i, key:"depressao"},
     {rx:/prosper|finan|dinhei|abund/i, key:"prosperidade"},
     {rx:/relacion|fam[ií]l|casam|parceir|comunica/i, key:"relacionamento"},
     {rx:/femin|ciclo|tpm|menop|fertilidade/i, key:"feminino"},
     {rx:/trauma|luto|abuso|pesad|p[óo]s-traum/i, key:"trauma"},
     {rx:/espirit|f[eé]|sutil|m[ií]stic/i, key:"espiritual"},
     {rx:/limpeza|miasma|obsess/i, key:"energia_limpeza"},
-    {rx:/foco|estudo|aten[cç][aã]o/i, key:"estudos_foco"},
-    {rx:/proje[cç][aã]o|astral|alma/i, key:"projeção"}
-  ];
+    {rx:/foco|estudo|aten[cç][aã]o|concentra/i, key:"estudos_foco"},
+    {rx:/proje[cç][aã]o|astral|alma/i, key:"projeção"},
+    {rx:/rinite|sinus|congest/i, key:"rinite"}
+  };
 
   function hash(s){let h=2166136261>>>0;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=(h*16777619)>>>0;}return h>>>0;}
 
@@ -68,10 +70,10 @@
     if(cats.length===0) cats.push("ansiedade");
     const h=hash(ctxText), picks=[];
     for(const c of cats){
-      const arr=(CAT[c]||[]).filter(t=> modo==="online" ? !CORPORAIS.has(t) : true);
-      const start = arr.length ? h % arr.length : 0;
-      for(let i=0;i<arr.length && picks.length<3;i++){
-        const t=arr[(start+i)%arr.length]; if(t && !picks.includes(t)) picks.push(t);
+      const pool = (CAT[c]||CAT.ansiedade||[]).filter(t=> modo==="online" ? !CORPORAIS.has(t) : true);
+      const start = pool.length ? h % pool.length : 0;
+      for(let i=0;i<pool.length && picks.length<3;i++){
+        const t=pool[(start+i)%pool.length]; if(t && !picks.includes(t)) picks.push(t);
       }
       if(picks.length>=3) break;
     }
@@ -84,12 +86,16 @@
     return picks.slice(0,3);
   }
 
-  // Aromaterapia baseada no contexto
+  // ---------- Aromaterapia turbinada
   function aromaterapiaBlend(ctx){
     if(/ins[oô]ni|insoni|sono/.test(ctx)) return {blend:"Lavanda 3gts + Bergamota 2gts + Camomila-romana 1gt", posologia:"Difusor 30–45 min antes de deitar (3–6 gts/200 mL). Inalação 2 respirações em picos.", cuidados:"Cítricos fotossensíveis na pele; dose baixa em gestantes/crianças."};
     if(/ansiedad|p[aâ]nico|nervos/.test(ctx)) return {blend:"Lavanda 3gts + Laranja-doce 2gts + Vetiver 1gt", posologia:"Difusor 20–30 min 2×/dia; inalação 2–3 respirações.", cuidados:"Vetiver é denso (1 gt). Evite dirigir se ficar sonolento."};
     if(/cefale|enxaquec|cabe[çc]a/.test(ctx)) return {blend:"Hortelã-pimenta 1gt + Lavanda 2gts + Manjerona 1gt (em 10 mL óleo vegetal)", posologia:"Aplicar pouca quantidade na nuca/templos 1–2×/dia; evitar olhos.", cuidados:"Evitar hortelã em <6 anos, gestantes e epilépticos."};
-    if(/gastrit|reflux|est[oô]m|digest|azia|n[aá]usea/.test(ctx)) return {blend:"Camomila-alemã 2gts + Erva-doce 2gts + Gengibre 1gt (em 20 mL OV)", posologia:"Massagem no abdome sentido horário 1–2×/dia 3–5 min; difusor Lavanda 3–4 gts à noite.", cuidados:"Evitar hortelã em refluxo ativo; gengibre é aquecedor."};
+    if(/gastrit|reflux|est[oô]m|digest|azia|n[aá]usea|c[oó]lica/.test(ctx)) return {blend:"Camomila-alemã 2gts + Erva-doce 2gts + Gengibre 1gt (em 20 mL OV)", posologia:"Massagem no abdome sentido horário 1–2×/dia 3–5 min; difusor Lavanda 3–4 gts à noite.", cuidados:"Evitar hortelã em refluxo ativo; gengibre é aquecedor."};
+    if(/tpm|c[oó]licas? menstruais|femin|menop/.test(ctx)) return {blend:"Gerânio 2gts + Lavanda 2gts + Sálvia-esclareia 1gt", posologia:"Difusor 20–30 min/dia; tópico em abdome baixo: 3 gts em 10 mL OV, 1–2×/dia.", cuidados:"Sálvia-esclareia: evitar na gestação."};
+    if(/rinite|sinus|congest/.test(ctx)) return {blend:"Eucalipto globulus 1gt + Tea tree 1gt + Lavanda 2gts + Limão 1gt", posologia:"Difusor 15–20 min, 2×/dia. Inalação a vapor suave (1–2 gts em bacia quente).", cuidados:"Limão fotossensível na pele; evitar eucalipto em <6 anos."};
+    if(/foco|estudo|aten[cç][aã]o|concentra/.test(ctx)) return {blend:"Alecrim qt. cineol 1gt + Hortelã-pimenta 1gt + Laranja-doce 2gts", posologia:"Difusor durante estudo por 20 min. Inalação pontual antes de tarefas.", cuidados:"Alecrim e hortelã: evitar em gestantes/hipertensos/epilépticos."};
+    if(/tristeza|des[aâ]nimo|apatia/.test(ctx)) return {blend:"Laranja-doce 2gts + Bergamota 2gts + Olíbano 1gt", posologia:"Difusor manhã/tarde 15–20 min; inalação breve em momentos de queda.", cuidados:"Cítricos fotossensíveis na pele; usar em ambiente ventilado."};
     return {blend:"Lavanda 3gts + Laranja-doce 2gts", posologia:"Difusor 20–30 min 1–2×/dia.", cuidados:"Cítricos na pele + sol não."};
   }
 
@@ -100,9 +106,9 @@
     let crit="Regulação do SNA, liberação somática e reorganização de hábitos.";
     let sinais=["Redução da escala 0–10","Sono/energia melhores","Menos tensão regional"];
     if(/ins[oô]ni|insoni|sono/.test(q)){sint="Insônia com hiperalerta noturno e ruminação."; oculto="Ritual de sono inconsistente e condicionamento de alerta."; crit="Aromaterapia límbica, mindfulness e harmonização energética."; sinais=["Latência menor","Menos despertares","Mais descanso"]; }
-    else if(/gastrit|reflux|est[oô]m|digest|azia|n[aá]usea/.test(q)){sint="Sintomas GI por estresse/hipervigilância visceral."; oculto="Somatização de preocupações no estômago."; crit="Desativar ameaça, favorecer digestão parasimpática."; sinais=["Menos azia","Conforto pós-refeição","Menos dor abdominal"]; }
+    else if(/gastrit|reflux|est[oô]m|digest|azia|n[aá]usea|c[oó]lica/.test(q)){sint="Sintomas GI por estresse/hipervigilância visceral."; oculto="Somatização de preocupações no estômago."; crit="Desativar ameaça, favorecer digestão parasimpática."; sinais=["Menos azia","Conforto pós-refeição","Menos dor abdominal"]; }
     else if(/dor|lombar|cervic|tens|m[uú]sc|costas|ombro/.test(q)){sint="Dor miofascial com proteção muscular."; oculto="Ciclo tensão→dor→proteção."; crit="Liberação mecânica suave + reflexos somatoautonômicos."; sinais=["Mais ADM","Menos dor ao fim do dia","Sono melhor"]; }
-    else if(/depress|apatia|anhedoni/.test(q)){sint="Humor deprimido com baixa motivação."; oculto="Narrativa autocrítica mantém evitação."; crit="Ritmos, simbolização (floral/PNL) e pequenos ganhos."; sinais=["Mais interesse","Rotina estável","Auto-relatos positivos"]; }
+    else if(/depress|apatia|anhedoni|tristeza/.test(q)){sint="Humor deprimido/baixo com pouca motivação."; oculto="Narrativa autocrítica mantém evitação."; crit="Ritmos, simbolização (floral/PNL) e pequenos ganhos."; sinais=["Mais interesse","Rotina estável","Auto-relatos positivos"]; }
     if(+intensidade>=8) crit += " Intensidade elevada: progredir devagar e aumentar grounding/suporte.";
     return {sintese:sint, oculto, criterio:crit, sinais};
   }
@@ -172,6 +178,17 @@
 
     const plano = plano7(tec);
 
+    // LOG (para exportar CSV depois)
+    try{
+      const logs = JSON.parse(localStorage.getItem("th60_logs")||"[]");
+      logs.push({
+        data: new Date().toISOString(),
+        terapeuta, cliente, nascimento:nasc, intensidade, queixa, tempo, efeitos, modo,
+        tecnicas: tec
+      });
+      localStorage.setItem("th60_logs", JSON.stringify(logs));
+    }catch(e){ console.warn("Falha ao registrar log:", e); }
+
     return [
       `Relatório  Instituto Saber Consciente`,
       `Terapeuta: ${terapeuta||"—"}   Cliente: ${cliente}   Nasc.: ${nasc}   Atendimento: ${modo.toUpperCase()}`,
@@ -192,116 +209,4 @@
     const MAP={"á":0xe1,"à":0xe0,"â":0xe2,"ã":0xe3,"ä":0xe4,"Á":0xc1,"À":0xc0,"Â":0xc2,"Ã":0xc3,"Ä":0xc4,"é":0xe9,"è":0xe8,"ê":0xea,"É":0xc9,"È":0xc8,"Ê":0xca,"í":0xed,"ì":0xec,"Í":0xcd,"Ì":0xcc,"ó":0xf3,"ò":0xf2,"ô":0xf4,"õ":0xf5,"Ó":0xd3,"Ò":0xd2,"Ô":0xd4,"Õ":0xd5,"ú":0xfa,"ù":0xf9,"Ú":0xda,"Ù":0xd9,"ç":0xe7,"Ç":0xc7,"ñ":0xf1,"Ñ":0xd1,"ü":0xfc,"Ü":0xdc};
     const normalize=(s)=>String(s||"").replace(/[“”„]/g,'"').replace(/[‘’]/g,"'").replace(/–|—/g,"-");
     function esc(s){
-      s=normalize(s); let out="";
-      for(const ch of s){
-        if(ch==="(") out+="\\("; else if(ch===")") out+="\\)"; else if(ch==="\\") out+="\\\\";
-        else { const code=ch.charCodeAt(0);
-          if(code>=32 && code<=126) out+=ch;
-          else if(MAP[ch]!==undefined) out+="\\"+("00"+MAP[ch].toString(8)).slice(-3);
-          else out+=" ";
-        }
-      } return out;
-    }
-    const bytelen=(t)=>new TextEncoder().encode(String(t)).length;
-
-    function wrapLines(text, charsPerLine){
-      const out=[];
-      for(const raw of String(text||"").split(/\r?\n/)){
-        const line=raw.replace(/\s+$/,"");
-        if(line===""){ out.push(""); continue; }
-        let cur="";
-        for(const word of line.split(/\s+/)){
-          const probe=(cur?cur+" ":"")+word;
-          if(probe.length>charsPerLine){
-            if(cur) out.push(cur);
-            if(word.length>charsPerLine){
-              let i=0; while(i<word.length){ out.push(word.slice(i,i+charsPerLine)); i+=charsPerLine; }
-              cur="";
-            }else cur=word;
-          }else cur=probe;
-        }
-        if(cur) out.push(cur);
-      }
-      return out;
-    }
-
-    function gen({bodyText, footerLeft, footerRight}){
-      const W=595.28, H=841.89;
-      const Mx=54, MyTop=54, MyBottom=54;
-      const FS=12, LH=16;
-      const usableH=H-(MyTop+MyBottom);
-      const charsPerLine=Math.floor((W-2*Mx)/(FS*0.56));
-
-      const lines=wrapLines(bodyText, charsPerLine);
-      const linesPerPage=Math.max(1, Math.floor(usableH/LH)-2); // reserva 2 linhas p/ rodapé
-
-      const pages=[];
-      for(let i=0;i<lines.length;i+=linesPerPage) pages.push(lines.slice(i,i+linesPerPage));
-      if(!pages.length) pages.push(["(vazio)"]);
-
-      let objs=[], id=1;
-      const add=(c)=>{const s=`${id} 0 obj\n${c}\nendobj\n`; objs.push(s); return id++;};
-
-      const font=add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>");
-      const pids=[];
-      pages.forEach((L,idx)=>{
-        let stream=`BT\n/F1 ${FS} Tf\n1 0 0 1 ${Mx} ${H-MyTop} Tm\n`;
-        let first=true;
-        for(const ln of L){ const e=esc(ln); if(first){stream+=`(${e}) Tj\n`; first=false;} else {stream+=`0 -${LH} Td\n(${e}) Tj\n`;} }
-        // rodapé
-        const footY=MyBottom-18;
-        const left=esc(footerLeft||""); const right=esc(footerRight||"");
-        stream+=`ET\nBT\n/F1 10 Tf\n1 0 0 1 ${Mx} ${footY} Tm\n(${left}) Tj\n`;
-        const approxRight = right.length*10*0.56;
-        const posRightX=Math.max(Mx, W-Mx-approxRight);
-        stream+=`1 0 0 1 ${posRightX} ${footY} Tm\n(${right}) Tj\nET`;
-
-        const cid=add(`<< /Length ${bytelen(stream)} >>\nstream\n${stream}\nendstream`);
-        const pid=add(`<< /Type /Page /Parent 0 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /Font << /F1 ${font} 0 R >> >> /Contents ${cid} 0 R >>`);
-        pids.push(pid);
-      });
-
-      const kids=pids.map(i=>`${i} 0 R`).join(" ");
-      const pagesId=add(`<< /Type /Pages /Kids [ ${kids} ] /Count ${pids.length} >>`);
-      objs=objs.map(o=>o.replace("/Parent 0 0 R", `/Parent ${pagesId} 0 R`));
-      const catalog=add(`<< /Type /Catalog /Pages ${pagesId} 0 R >>`);
-
-      let pdf="%PDF-1.4\n", offs=[0];
-      for(const o of objs){ offs.push(bytelen(pdf)); pdf+=o; }
-      const xref=bytelen(pdf);
-      let xr=`xref\n0 ${objs.length+1}\n0000000000 65535 f \n`;
-      for(let i=1;i<=objs.length;i++) xr+=String(offs[i]).padStart(10,"0")+" 00000 n \n";
-      const trailer=`trailer\n<< /Size ${objs.length+1} /Root ${catalog} 0 R >>\nstartxref\n${xref}\n%%EOF`;
-      return pdf+xr+trailer;
-    }
-
-    function download(name, bodyText, footerLeft, footerRight){
-      const data=gen({bodyText, footerLeft, footerRight});
-      const blob=new Blob([data],{type:"application/pdf"});
-      const a=document.createElement("a");
-      a.href=URL.createObjectURL(blob); a.download=name; a.click();
-      setTimeout(()=>URL.revokeObjectURL(a.href),1200);
-    }
-    return { download };
-  })();
-
-  // -------------------- Bindings --------------------
-  document.addEventListener("DOMContentLoaded", function(){
-    el.btnGerar?.addEventListener("click", ()=>{
-      try{ el.report.textContent = montarRelatorio(); }
-      catch(e){ console.error(e); alert(e.message || "Falha ao gerar parecer."); }
-    });
-    el.btnReset?.addEventListener("click", ()=>{ el.report.textContent="O parecer aparecerá aqui."; });
-    el.btnPDF?.addEventListener("click", ()=>{
-      const txt = el.report.textContent || "";
-      const hoje = new Date().toISOString().slice(0,10);
-      const cliente = (el.cliente?.value || "—").trim();
-      const name = `Relatorio_${cliente.replace(/\s+/g,"_")}_${hoje}.pdf`;
-      const footerLeft = `Cliente: ${cliente}`;
-      const footerRight = `Data do atendimento: ${hoje}  ·  TH60`;
-      try{ PDF.download(name, txt, footerLeft, footerRight); }
-      catch(e){ console.error(e); alert("Falha ao gerar PDF."); }
-    });
-  });
-
-})();
+      s=norm
