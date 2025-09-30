@@ -1,88 +1,98 @@
-<script>
-function buildPrompt(){
-  const v = sel => (document.querySelector(sel).value || '').trim();
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Mentor Premium — ISC</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;background:#f6f7fb;margin:0;padding:20px;color:#0f172a}
+    .chkgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+    .chk{display:flex;align-items:center;gap:6px;border:1px solid #d0dae6;border-radius:10px;padding:6px;background:#fff}
+    .chk input{width:16px;height:16px;accent-color:#1f6feb}
+    .plan{border:1px dashed #cfdced;background:#fff;border-radius:10px;padding:10px;margin:10px 0}
+  </style>
+</head>
+<body>
+  <h2>Mentor Premium — ISC</h2>
+  <label>Nome: <input id="nome"></label><br><br>
+  <label>Queixa: <input id="queixa" style="width:60%"></label><br><br>
+  <label>Contexto: <input id="contexto" style="width:80%"></label>
 
-  // helper opcional: idade aproximada
-  function calcAge(iso){
-    if(!iso) return '—';
-    const d = new Date(iso);
-    if(isNaN(d)) return '—';
-    const diff = Date.now() - d.getTime();
-    const age = new Date(diff).getUTCFullYear() - 1970;
-    return age + ' anos';
-  }
+  <h3>Anamnese</h3>
+  <div class="chkgrid" id="anam">
+    <label class="chk"><input type="checkbox" value="TAG"> Ansiedade Generalizada (TAG)</label>
+    <label class="chk"><input type="checkbox" value="PANICO"> Crises de Pânico</label>
+    <label class="chk"><input type="checkbox" value="BURNOUT"> Burnout</label>
+    <label class="chk"><input type="checkbox" value="BORDERLINE"> Borderline</label>
+    <label class="chk"><input type="checkbox" value="TOC"> TOC</label>
+    <label class="chk"><input type="checkbox" value="TDAH"> TDAH</label>
+    <!-- Outros transtornos poderiam continuar aqui -->
+  </div>
 
-  const dados = {
-    nome: v('#nome') || '—',
-    terapeuta: v('#terapeuta') || '—',
-    nasc: v('#nascimento') || '—',
-    idade: calcAge(v('#nascimento')),
-    queixa: v('#queixa') || '—',
-    tempo: v('#tempo') || '—',
-    impacto: v('#impacto') || '—',
-    obs: v('#obs') || '—',
-  };
+  <p>
+    <button id="gerar">Aplicar & Sugerir Técnicas</button>
+    <button id="pdf">Gerar PDF</button>
+  </p>
 
-  /*  ESTILO DO RELATÓRIO (modelo “Luciana”)
-      Gera primeiro um “Relatório de Atendimento” com sub-roteiro (manejo, indicadores 4–6 semanas, plano de ação)
-      e depois um “Parecer do Gestor” profundo, em blocos.
-      Cada bloco começa com ### para o renderizador quebrar certinho em cartões/pdf.
-  */
-  return `
-Você é mentor(a) clínico(a) especilizado em psicanaálise e terapias holísticas de alta performmance. Escreva em **MARKDOWN**, com **títulos iniciados por "###"** (cada título = um bloco).
-Estilo: clínico, claro e humano; frases longas (6–10 linhas); nada de enfeite; não invente dados.
+  <div id="out" class="plan">Preencha e clique em aplicar.</div>
 
-Dados do caso
-- Cliente: ${dados.nome}
-- Terapeuta: ${dados.terapeuta}
-- Nascimento: ${dados.nasc} • Idade: ${dados.idade}
-- Queixa principal: ${dados.queixa}
-- Tempo de sintomas: ${dados.tempo}
-- Impacto/Efeitos: ${dados.impacto}
-- Observações: ${dados.obs}
-
-### Relatório de Atendimento — (defina o foco terapêutico de forma coerente, ex.: Psicanálise (foco) / TCC (foco))
-Escreva cabeçalho compacto no primeiro parágrafo: cliente, idade, data de nascimento (se houver), população etária apropriada (ex.: Adulto maduro / Envelhecimento), queixas e intensidade/tempo se possíveis a partir dos dados. Mantenha 3–5 linhas.
-
-### Sub-roteiro — População (derivar da idade e contexto)
-**Manejo prioritário**
-- Liste 3–6 orientações práticas de manejo de sessão e enquadre técnico.
-
-**Indicadores de progresso (4–6 semanas)**
-- De 4 a 6 marcadores observáveis (frequência, intensidade, duração, engajamento, rotina, sono, rede).
-
-**Plano de Ação**
-1) Objetivo clínico central (1–2 frases).
-2) Método/abordagem (ex.: psicanálise centrada, TCC, mentalização…), com 1–6 linhas de como conduzir.
-3) Indicadores de que está funcionando (3 itens).
-
-### Parecer do Gestor — Síntese do caso
-Em 4–8 bullets: quadro geral, impacto funcional, fatores somáticos/psicológicos/relacionais e atenção imediata (se houver).
-
-### Parecer do Gestor — Pontos de formulação
-- Mostre o encadeamento do problema (gatilhos/condições, padrões que mantêm, efeitos).
-- Se fizer sentido, integre um mini 5Ps em 4–8 linhas (predisponentes, precipitantes, perpetuadores, protetores, padrão atual).
-
-### Parecer do Gestor — Intervenções prioritárias
-Liste 3–6 frentes, cada uma com **micro-protocolos práticos** (passo a passo + frequência/duração):
-1) Psicanálise/Processo reflexivo (ou foco escolhido)
-2) TCC (reestruturação, exposição graduada, TDR/experimentos)
-3) Regulação somática (respiração guia, grounding, relaxamento)
-4) Rotina & Sono (higiene do sono e limites), mostre o que está oculto no comportamento do paciente
-5) Rede/recursos/psicoeducação (mensagens-chave simples)
-6) Se necessário, avaliação médica para comorbidades/medicação
-
-### Parecer do Gestor — Riscos/alertas
-- Bandeiras vermelhas a monitorar conforme o caso.
-- **Se houver ideação ou comportamento suicida**: oriente **encaminhamento IMEDIATO** ao psiquiatra e/ou serviço de emergência e descreva 3 passos práticos (ex.: contato da rede, SAMU/192, acompanhamento).
-
-### Parecer do Gestor — Próximos passos e acompanhamento
-- Agenda de sessões e reavaliação (4–6 semanas), critérios de ajuste e de alta, combinação de tarefas/recursos.
-
-Formatação:
-- Use bullets sempre que possível; parágrafos curtos (≤4 linhas).
-- Evite tabelas longas.
-  `;
-}
-
-</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    const $=q=>document.querySelector(q);
+    const $$=q=>Array.from(document.querySelectorAll(q));
+    function sampleUpTo(a,n){
+      const x=[...a];for(let i=x.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));[x[i],x[j]]=[x[j],x[i]];
+      }return x.slice(0,Math.min(n,x.length));
+    }
+    const CATALOGO={
+      "TAG":[
+        {t:"Diário de preocupações",what:"Delimitar horário fixo",how:["20min/dia","Anotar e adiar"],why:"Reduz ruminação",hidden:"Necessidade de controle",kpi:["Menos preocupações fora do tempo"]},
+        {t:"Solução de problemas",what:"Transformar em ação",how:["Definir problema","Plano com prazo"],why:"Reduz ruminação improdutiva",hidden:"Medo de errar",kpi:["Execução de passos"]}
+      ],
+      "PANICO":[
+        {t:"Exposição interoceptiva",what:"Recriar sintomas",how:["3x/sem","Respiração 4-4-6"],why:"Reduz medo do corpo",hidden:"Medo de perder controle",kpi:["Menos visitas ao PS"]},
+        {t:"Plano de crise",what:"Roteiro de emergência",how:["Grounding 5-4-3-2-1","Rede de apoio"],why:"Aumenta segurança",hidden:"Dependência externa",kpi:["Uso menor de benzodiazepínicos"]}
+      ],
+      "BURNOUT":[
+        {t:"Ritmo & fronteiras",what:"Redefinir limites",how:["Pausas programadas","Fim de expediente"],why:"Reduz sobrecarga",hidden:"Identidade ligada a performance",kpi:["Sono regulado"]}
+      ],
+      "BORDERLINE":[
+        {t:"DBT — TIP",what:"Regulação rápida",how:["Água fria","Exercício curto"],why:"Desativa hiperexcitação",hidden:"Acting-out de dor",kpi:["Menos impulsos autoagressivos"]}
+      ],
+      "TOC":[
+        {t:"EPR",what:"Exposição com prevenção de resposta",how:["Hierarquia de estímulos","Sem ritual"],why:"Habituação",hidden:"Fusão pensamento-ação",kpi:["Menos rituais compulsivos"]}
+      ],
+      "TDAH":[
+        {t:"Blocos de foco",what:"Técnica Pomodoro",how:["25/5 ciclos","3 prioridades"],why:"Melhora executivas",hidden:"Evitação do fracasso",kpi:["Tarefas concluídas"]}
+      ]
+    };
+    function gerar(){
+      const nome=$("#nome").value||"Paciente";
+      const q=$("#queixa").value||"—";
+      const c=$("#contexto").value||"—";
+      const mods=$$("#anam input:checked").map(x=>x.value);
+      let html=`<div class="plan"><b>Parecer — ${nome}</b><br><b>Queixa:</b> ${q}<br><b>Contexto:</b> ${c}</div>`;
+      if(!mods.length){$("#out").innerHTML=html+"<div class='plan'>Marque ao menos um item.</div>";return;}
+      for(const m of mods){const esc=sampleUpTo(CATALOGO[m]||[],3);
+        for(const b of esc){html+=`<div class='plan'><h4><b>${b.t} (${m})</b></h4>
+        <b>O que fazer:</b> ${b.what}<br>
+        <b>Como fazer:</b><ul>${(b.how||[]).map(s=>`<li>${s}</li>`).join("")}</ul>
+        <b>Por quê:</b> ${b.why}<br>
+        <b>Oculto:</b> ${b.hidden}<br>
+        <b>Indicadores:</b><ul>${(b.kpi||[]).map(s=>`<li>${s}</li>`).join("")}</ul>
+        </div>`;}}
+      $("#out").innerHTML=html;
+    }
+    $("#gerar").addEventListener("click",gerar);
+    document.getElementById("pdf").addEventListener("click",()=>{
+      const jsPDF=window.jspdf.jsPDF;
+      const doc=new jsPDF();doc.setFont("helvetica","normal");doc.setFontSize(12);
+      const nome=$("#nome").value||"Paciente";
+      const text=$("#out").innerText.split("\n");let y=20;
+      for(const L of text){doc.text(L,15,y);y+=8;if(y>280){doc.addPage();y=20;}}
+      doc.text(`${nome} • ${(new Date()).toLocaleDateString("pt-BR")}`,15,290);
+      doc.save("Parecer-ISC.pdf");
+    });
+  </script>
+</body>
+</html>
