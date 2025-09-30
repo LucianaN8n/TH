@@ -10,6 +10,6 @@
 .input-row input,textarea{width:100%;padding:10px;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:14px;color:var(--ink);outline:none}
 textarea{min-height:96px;resize:vertical}.btn{border:none;border-radius:12px;padding:12px 14px;font-weight:700;cursor:pointer}
 .btn-primary{background:linear-gradient(180deg,var(--accent),var(--accent-2));color:#083344}.btn-ghost{background:#fff;border:1px solid var(--border);color:#0f172a}
-.small{font-size:12px;color:var(--muted)}#report{min-height:400px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px}
+.small{font-size:12px;color:var(--muted)}#report{min-height:400px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;white-space:pre-line}
 .notice{font-size:12px;color:#334155;background:#f1f5f9;border:1px solid #e2e8f0;padding:8px 10px;border-radius:10px}
 @media print{.no-print{display:none}@page{size:A4;margin:10mm}}
