@@ -1,0 +1,2021 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Terapeuta Holístico — 60 Técnicas | Instituto Saber Consciente</title>
+  <meta name="description" content="Assistente do Terapeuta Holístico: anamnese rápida, parecer clínico-energético, recomendação de técnicas e relatório detalhado."/>
+  <link rel="icon" href="assets/logo.svg"/>
+  <link rel="preload" as="image" href="assets/logo.svg"/>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="assets/logo.svg" alt="Instituto Saber Consciente logo"/>
+      <div class="title">
+        <h1>Assistente — Terapeuta Holístico (60 técnicas)</h1>
+        <p>ISC • Anamnese guiada • Parecer preciso • Relatório detalhado</p>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- Left: Form -->
+      <div class="card">
+        <div class="content">
+          <div class="section-title">Dados do Atendimento</div>
+          <div class="input-row">
+            <div>
+              <label>Nome do Terapeuta</label>
+              <input id="terapeuta" placeholder="Seu nome"/>
+            </div>
+            <div>
+              <label>Nome do Cliente</label>
+              <input id="cliente" placeholder="Nome completo do cliente"/>
+            </div>
+          </div>
+          <div class="input-row-2 mt8">
+            <div>
+              <label>Data de Nascimento (aceita 160172, 16/01/1972 ou 16-01-72)</label>
+              <input id="nascimento" placeholder="ddmmaaaa ou dd/mm/aaaa"/>
+            </div>
+            <div>
+              <label>Dias cursados na formação (desbloqueio de técnicas por tempo)</label>
+              <input id="diasFormacao" type="number" min="0" step="1" placeholder="0"/>
+            </div>
+            <div>
+              <label>Intensidade da queixa (0–10)</label>
+              <input id="intensidade" type="number" min="0" max="10" step="1" placeholder="6"/>
+            </div>
+          </div>
+
+          <div class="section-title mt16">Queixa e Padrões</div>
+          <div class="input-row">
+            <div>
+              <label>Queixa principal (palavra-chave)</label>
+              <input id="queixa" placeholder="ex.: ansiedade, dor lombar, insônia, prosperidade, relacionamento"/>
+            </div>
+            <div>
+              <label>Tempo de sintomas</label>
+              <input id="tempo" placeholder="ex.: 6 meses, 2 anos, desde a adolescência"/>
+            </div>
+          </div>
+          <div class="input-row mt8">
+            <div>
+              <label>Padrões/efeitos observados</label>
+              <input id="efeitos" placeholder="ex.: gastrite, tensão nos ombros, irritabilidade"/>
+            </div>
+            <div>
+              <label>Observações (opcional)</label>
+              <input id="obs" placeholder="gatilhos, histórico, medicação, contexto"/>
+            </div>
+          </div>
+
+          <div class="section-title mt16">Sugestões de Técnicas</div>
+          <div class="notice">Digite a queixa e clique em “Sugerir técnicas”. Selecione até 3 para o plano — o catálogo completo está abaixo.</div>
+          <div class="flex mt12">
+            <button id="btnSugerir" class="btn btn-primary">Sugerir técnicas</button>
+            <button id="btnLimpar" class="btn btn-ghost">Limpar seleção</button>
+          </div>
+          <div id="sugestoes" class="mt12"></div>
+
+          <div class="section-title mt16">Catálogo completo (60)</div>
+          <div id="tech-catalog"></div>
+
+          <div class="flex mt16">
+            <span class="small">Seleção atual: <b id="selCount">0/3</b></span>
+            <div class="spread" style="flex:1"></div>
+            <button id="btnGerar" class="btn btn-primary">Gerar Parecer</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Report -->
+      <div class="card">
+        <div class="content">
+          <div class="spread">
+            <div class="section-title">Relatório</div>
+            <div class="no-print flex" style="gap:8px">
+              <button id="btnPrint" class="btn btn-ghost">Imprimir/Salvar PDF</button>
+              <button id="btnPDF" class="btn btn-primary">Baixar PDF</button>
+              <button id="btnCopiar" class="btn btn-ghost">Copiar texto</button>
+              <button id="btnReset" class="btn btn-danger">Zerar relatório</button>
+            </div>
+          </div>
+          <div id="report">
+            <div class="notice">Preencha os dados à esquerda, selecione até 3 técnicas e clique em “Gerar Parecer”. O relatório completo aparecerá aqui.</div>
+          </div>
+          <div class="small mt8 no-print">Dica: ao salvar em PDF pelo navegador, desmarque “Cabeçalhos e rodapés” para não mostrar a URL.</div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      © 2025 Instituto Saber Consciente • Este app é material educacional. Não substitui avaliação médica/psicológica.
+    </footer>
+  </div>
+
+  <script>
+    /* Segurança: sem eval/new Function/setTimeout('string'), sem inline JS */
+    window.__TECHNIQUES__ = [
+{
+"name": "Florais de bach",
+"available_after_days": null,
+"tags": [
+"equilíbrio",
+"holístico"
+],
+"overview": "Essências vibracionais para modular estados emocionais (medo, incerteza, apatia, hipersensibilidade, desânimo, preocupação).",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Fitoterapia",
+"available_after_days": null,
+"tags": [
+"dor",
+"inflamação"
+],
+"overview": "Fitoterapia: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"dor muscular",
+"fadiga",
+"tensão"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas).",
+"Interações medicamentosas potenciais: revisar comorbidades."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Orientação de fitos seguros (infuso/decocto), dosagem e janela de revisão.",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Auriculoterapia",
+"available_after_days": null,
+"tags": [
+"ansiedade",
+"regulação"
+],
+"overview": "Estímulo de pontos reflexos na orelha para regulação neurovegetativa (ansiedade, dor, insônia).",
+"indications": [
+"ansiedade",
+"estresse",
+"insônia leve"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Mapeie pontos Shen Men, Rim, Ansiedade, Insônia; estimule (seed/press).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Cromoterapia",
+"available_after_days": null,
+"tags": [
+"ansiedade",
+"regulação"
+],
+"overview": "Aplicação de cores para indução de estados psicofisiológicos (ex.: azul para acalmar, verde para equilíbrio).",
+"indications": [
+"ansiedade",
+"estresse",
+"insônia leve"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação de luz/visualização: azul (acalmar), verde (equilibrar), amarelo (foco).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Fonte de luz/fitas coloridas",
+"Cartas de cor"
+]
+},
+{
+"name": "Reflexologia Podal",
+"available_after_days": null,
+"tags": [
+"dor",
+"inflamação"
+],
+"overview": "Pressão em mapas reflexos dos pés para modular sistemas corporais (digestivo, endócrino, muscoesquelético).",
+"indications": [
+"dor muscular",
+"fadiga",
+"tensão"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Sequência: plexo solar → sistema envolvido → pontos dolorosos (pressão 6–8s).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Creme neutro",
+"Mapa reflexo"
+]
+},
+{
+"name": "Aromaterapia",
+"available_after_days": null,
+"tags": [
+"ansiedade",
+"regulação"
+],
+"overview": "Uso terapêutico de óleos essenciais para modular emoções, foco e fisiologia por via olfativa e tópica.",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas).",
+"Fotossensibilização (ex.: cítricos) em aplicações cutâneas."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Inalação 3x + aplicação diluída (1–3%) em pulsos/peito conforme objetivo.",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Óleos essenciais (diluídos)",
+"Óleo carreador",
+"Algodões/lenços"
+]
+},
+{
+"name": "Massagem com óleos essenciais",
+"available_after_days": null,
+"tags": [
+"dor",
+"inflamação"
+],
+"overview": "Massagem com óleos essenciais: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"dor muscular",
+"fadiga",
+"tensão"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas).",
+"Infecções, feridas abertas ou trombose: evitar."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Deslizamentos + amassamentos suaves, foco em trapézios e lombar conforme queixa.",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Óleos essenciais (diluídos)",
+"Óleo carreador",
+"Algodões/lenços"
+]
+},
+{
+"name": "Ventosaterapia",
+"available_after_days": null,
+"tags": [
+"dor",
+"inflamação"
+],
+"overview": "Aplicação de vácuo local para analgesia, mobilização tecidual e melhora circulatória.",
+"indications": [
+"dor muscular",
+"fadiga",
+"tensão"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas).",
+"Varizes, trombose ou pele frágil: contraindicado na região."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Ventosas estáticas/deslizantes 5–8 min em paravertebrais e trigger points.",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Ventosas",
+"Óleo para deslizamento"
+]
+},
+{
+"name": "Crenças limitantes",
+"available_after_days": null,
+"tags": [
+"autoconhecimento",
+"padrões"
+],
+"overview": "Identificação, disputa e reprogramação de crenças-raiz que mantêm sintomas e auto-sabotagem.",
+"indications": [
+"autossabotagem",
+"padrões emocionais",
+"procrastinação"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Biomagnetismo",
+"available_after_days": null,
+"tags": [
+"equilíbrio",
+"holístico"
+],
+"overview": "Biomagnetismo: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Pares biomagnéticos selecionados conforme mapa da queixa.",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Ímãs terapia",
+"Mapa de pares"
+]
+},
+{
+"name": "Ho’oponopono",
+"available_after_days": null,
+"tags": [
+"equilíbrio",
+"holístico"
+],
+"overview": "Ho’oponopono: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Moxaterapia",
+"available_after_days": null,
+"tags": [
+"dor",
+"inflamação"
+],
+"overview": "Estimulação por calor (moxa) em pontos energéticos para vitalidade e dor fria.",
+"indications": [
+"dor muscular",
+"fadiga",
+"tensão"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas).",
+"Neuropatias periféricas com sensibilidade reduzida: evitar queimaduras."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Moxa bastão em pontos escolhidos 3×30s, atenção à sensação térmica.",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Moxa bastão",
+"Recipiente seguro"
+]
+},
+{
+"name": "Cone hindu",
+"available_after_days": null,
+"tags": [
+"equilíbrio",
+"holístico"
+],
+"overview": "Cone hindu: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação cuidadosa do cone auricular com proteção e supervisão.",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Cones",
+"Protetores",
+"Recipiente seguro"
+]
+},
+{
+"name": "Florais de minas",
+"available_after_days": null,
+"tags": [
+"equilíbrio",
+"holístico"
+],
+"overview": "Florais de minas: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "PNL – Programação Neurolinguística",
+"available_after_days": null,
+"tags": [
+"autoconhecimento",
+"padrões"
+],
+"overview": "Reestruturação de mapas mentais, linguagem e estados para mudança rápida de padrões.",
+"indications": [
+"autossabotagem",
+"padrões emocionais",
+"procrastinação"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Ancoragem + ressignificação de submodalidades + ensaio mental (future pace).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Cura Emocional – Kuan Yin",
+"available_after_days": null,
+"tags": [
+"autocuidado",
+"feminino"
+],
+"overview": "Trabalho compassivo de transmutação de dor em sabedoria sob arquétipo de Kuan Yin.",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Mindfulness – Atenção Plena",
+"available_after_days": null,
+"tags": [
+"ansiedade",
+"regulação"
+],
+"overview": "Treino de presença, metaconsciência e regulação da atenção para reduzir reatividade.",
+"indications": [
+"ansiedade",
+"estresse",
+"insônia leve"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Respiração âncora + body scan curto + treino de atenção aberta.",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Floral de st germain",
+"available_after_days": null,
+"tags": [
+"ansiedade",
+"regulação"
+],
+"overview": "Floral de st germain: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"ansiedade",
+"estresse",
+"insônia leve"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Bases da medicina germânica",
+"available_after_days": null,
+"tags": [
+"equilíbrio",
+"holístico"
+],
+"overview": "Bases da medicina germânica: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Ginecologia natural disponível",
+"available_after_days": null,
+"tags": [
+"autocuidado",
+"feminino"
+],
+"overview": "Cuidado integral feminino com enfoque em práticas naturais e autorregulação.",
+"indications": [
+"autoestima",
+"ciclos femininos",
+"equilíbrio hormonal"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Introdução a medicina tradicional chinesa",
+"available_after_days": null,
+"tags": [
+"equilíbrio",
+"holístico"
+],
+"overview": "Introdução a medicina tradicional chinesa: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Meditação",
+"available_after_days": null,
+"tags": [
+"ansiedade",
+"regulação"
+],
+"overview": "Meditação: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"ansiedade",
+"estresse",
+"insônia leve"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Nutrição Holística",
+"available_after_days": null,
+"tags": [
+"equilíbrio",
+"holístico"
+],
+"overview": "Nutrição Holística: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Psicossomática",
+"available_after_days": null,
+"tags": [
+"autoconhecimento",
+"padrões"
+],
+"overview": "Leitura clínica do corpo como expressão de conflitos psíquicos e padrões relacionais.",
+"indications": [
+"autossabotagem",
+"padrões emocionais",
+"procrastinação"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Exploração mente-corpo do sintoma + simbolização e vínculo relacional.",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Limpeza energética",
+"available_after_days": null,
+"tags": [
+"equilíbrio",
+"holístico"
+],
+"overview": "Limpeza energética: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Reiki do Sagrado Feminino",
+"available_after_days": null,
+"tags": [
+"ansiedade",
+"autocuidado",
+"feminino",
+"regulação"
+],
+"overview": "Reiki do Sagrado Feminino: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"ansiedade",
+"autoestima",
+"ciclos femininos",
+"equilíbrio hormonal",
+"estresse",
+"insônia leve"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Sequência por chakras (raiz→coroa), atenção a áreas de maior necessidade.",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Mesa Radiônica Universal",
+"available_after_days": 8,
+"tags": [
+"campo sutil",
+"limpeza"
+],
+"overview": "Mesa Radiônica Universal: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Leitura diagnóstica sutil + intervenção/harmonização guiada (ética e consentimento).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Mesa/placa radiônica",
+"Testemunho/tema"
+]
+},
+{
+"name": "Feng Shui",
+"available_after_days": null,
+"tags": [
+"equilíbrio",
+"holístico"
+],
+"overview": "Feng Shui: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Constelação com Mesa Radiônica",
+"available_after_days": null,
+"tags": [
+"autoconhecimento",
+"campo sutil",
+"limpeza",
+"padrões"
+],
+"overview": "Leitura sistêmica e harmonização simbólica via mesa radiônica com enfoque em vínculos.",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Leitura diagnóstica sutil + intervenção/harmonização guiada (ética e consentimento).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Mesa/placa radiônica",
+"Testemunho/tema"
+]
+},
+{
+"name": "Terapia quântica",
+"available_after_days": null,
+"tags": [
+"equilíbrio",
+"holístico"
+],
+"overview": "Terapia quântica: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Cristaloterapia",
+"available_after_days": null,
+"tags": [
+"campo sutil",
+"limpeza"
+],
+"overview": "Uso de cristais para ressonância e equilíbrio de chakras e intenções.",
+"indications": [
+"ansiedade",
+"estresse",
+"insônia leve"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Sequência por chakras (raiz→coroa), atenção a áreas de maior necessidade.",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Radiestesia",
+"available_after_days": null,
+"tags": [
+"campo sutil",
+"limpeza"
+],
+"overview": "Leitura e harmonização energética com instrumentos radiestésicos (pêndulo, bastões).",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Leitura diagnóstica sutil + intervenção/harmonização guiada (ética e consentimento).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Pêndulo/bastões",
+"Gráficos se aplicável"
+]
+},
+{
+"name": "Reiki xamânico mahe’o nível 1 ao mestrado",
+"available_after_days": null,
+"tags": [
+"ansiedade",
+"regulação"
+],
+"overview": "Reiki xamânico mahe’o nível 1 ao mestrado: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"ansiedade",
+"estresse",
+"insônia leve"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Sequência por chakras (raiz→coroa), atenção a áreas de maior necessidade.",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Kundalini reiki",
+"available_after_days": 8,
+"tags": [
+"ansiedade",
+"regulação"
+],
+"overview": "Kundalini reiki: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"ansiedade",
+"estresse",
+"insônia leve"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Sequência por chakras (raiz→coroa), atenção a áreas de maior necessidade.",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Chakras",
+"available_after_days": null,
+"tags": [
+"campo sutil",
+"limpeza"
+],
+"overview": "Chakras: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Sequência por chakras (raiz→coroa), atenção a áreas de maior necessidade.",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Baralho cigano",
+"available_after_days": 8,
+"tags": [
+"insight",
+"intuição"
+],
+"overview": "Baralho cigano: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"clareza de propósito",
+"decisões",
+"prosperidade"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Reiki xamânico amadeus nível 1 e mestrado",
+"available_after_days": null,
+"tags": [
+"ansiedade",
+"regulação"
+],
+"overview": "Reiki xamânico amadeus nível 1 e mestrado: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"ansiedade",
+"estresse",
+"insônia leve"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Sequência por chakras (raiz→coroa), atenção a áreas de maior necessidade.",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Florais Etéricos Xamânicos",
+"available_after_days": null,
+"tags": [
+"equilíbrio",
+"holístico"
+],
+"overview": "Florais Etéricos Xamânicos: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Reiki usui tibetano nível 1 ao mestrado",
+"available_after_days": null,
+"tags": [
+"ansiedade",
+"regulação"
+],
+"overview": "Canalização de energia vital para harmonização de centros e campos sutis.",
+"indications": [
+"ansiedade",
+"estresse",
+"insônia leve"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Sequência por chakras (raiz→coroa), atenção a áreas de maior necessidade.",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Registros akáshicos",
+"available_after_days": null,
+"tags": [
+"campo sutil",
+"insight",
+"intuição",
+"limpeza"
+],
+"overview": "Acesso intuitivo ao campo de memórias/arquivos para insights e alinhamento de alma.",
+"indications": [
+"clareza de propósito",
+"decisões",
+"prosperidade"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Leitura diagnóstica sutil + intervenção/harmonização guiada (ética e consentimento).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Apometria",
+"available_after_days": null,
+"tags": [
+"campo sutil",
+"limpeza"
+],
+"overview": "Apometria: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Leitura diagnóstica sutil + intervenção/harmonização guiada (ética e consentimento).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Reiki celestial",
+"available_after_days": null,
+"tags": [
+"ansiedade",
+"regulação"
+],
+"overview": "Reiki celestial: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"ansiedade",
+"estresse",
+"insônia leve"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Sequência por chakras (raiz→coroa), atenção a áreas de maior necessidade.",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Magia dos Nós",
+"available_after_days": null,
+"tags": [
+"energia",
+"prosperidade"
+],
+"overview": "Magia dos Nós: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Cocriando Prosperidade",
+"available_after_days": null,
+"tags": [
+"energia",
+"prosperidade"
+],
+"overview": "Sintonização de mentalidade e campo para fluxo de abundância consciente.",
+"indications": [
+"clareza de propósito",
+"decisões",
+"prosperidade"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Anjos de Cura",
+"available_after_days": null,
+"tags": [
+"equilíbrio",
+"holístico"
+],
+"overview": "Anjos de Cura: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"clareza de propósito",
+"decisões",
+"prosperidade"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Cortes Cármicos com Arcanjo Miguel",
+"available_after_days": null,
+"tags": [
+"equilíbrio",
+"holístico"
+],
+"overview": "Cortes Cármicos com Arcanjo Miguel: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Terapia dos sonhos",
+"available_after_days": 7,
+"tags": [
+"equilíbrio",
+"holístico"
+],
+"overview": "Terapia dos sonhos: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "As 7 leis herméticas",
+"available_after_days": null,
+"tags": [
+"equilíbrio",
+"holístico"
+],
+"overview": "As 7 leis herméticas: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Arcanjos de cura",
+"available_after_days": 7,
+"tags": [
+"equilíbrio",
+"holístico"
+],
+"overview": "Arcanjos de cura: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"clareza de propósito",
+"decisões",
+"prosperidade"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Runas draconianas",
+"available_after_days": 7,
+"tags": [
+"energia",
+"prosperidade"
+],
+"overview": "Runas draconianas: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"clareza de propósito",
+"decisões",
+"prosperidade"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Dragon reiki",
+"available_after_days": 7,
+"tags": [
+"ansiedade",
+"regulação"
+],
+"overview": "Dragon reiki: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"ansiedade",
+"estresse",
+"insônia leve"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Sequência por chakras (raiz→coroa), atenção a áreas de maior necessidade.",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Projeção Astral",
+"available_after_days": null,
+"tags": [
+"insight",
+"intuição"
+],
+"overview": "Projeção Astral: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Leitura da Alma",
+"available_after_days": 7,
+"tags": [
+"insight",
+"intuição"
+],
+"overview": "Leitura da Alma: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"clareza de propósito",
+"decisões",
+"prosperidade"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Mesa Apométrica",
+"available_after_days": null,
+"tags": [
+"campo sutil",
+"limpeza"
+],
+"overview": "Mesa Apométrica: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Leitura diagnóstica sutil + intervenção/harmonização guiada (ética e consentimento).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Mesa/placa radiônica",
+"Testemunho/tema"
+]
+},
+{
+"name": "Magia das Velas",
+"available_after_days": null,
+"tags": [
+"energia",
+"prosperidade"
+],
+"overview": "Magia das Velas: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Corpos dimensionais e Frequência Energética",
+"available_after_days": null,
+"tags": [
+"equilíbrio",
+"holístico"
+],
+"overview": "Corpos dimensionais e Frequência Energética: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Soramig astral money reiki",
+"available_after_days": null,
+"tags": [
+"ansiedade",
+"energia",
+"prosperidade",
+"regulação"
+],
+"overview": "Soramig astral money reiki: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"ansiedade",
+"clareza de propósito",
+"decisões",
+"estresse",
+"insônia leve",
+"prosperidade"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Sequência por chakras (raiz→coroa), atenção a áreas de maior necessidade.",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+},
+{
+"name": "Terapia com pantáculos",
+"available_after_days": null,
+"tags": [
+"energia",
+"prosperidade"
+],
+"overview": "Terapia com pantáculos: abordagem holística focada em equilíbrio de corpo-mente-energia, com protocolo seguro e progressivo.",
+"indications": [
+"autoconhecimento",
+"equilíbrio energético"
+],
+"contraindications": [
+"Gestação: evitar pontos/protocolos agressivos.",
+"Doenças dermatológicas ativas no local (quando houver contato).",
+"Condições psiquiátricas agudas: priorizar estabilização médica.",
+"Alergias conhecidas a insumos (óleos, ervas, resinas)."
+],
+"protocol": [
+"Briefing e checagem de objetivos (2–3 min).",
+"Avaliação focal (mapas/escala de intensidade 0–10).",
+"Aplicação do núcleo da técnica (12–20 min).",
+"Integração e grounding (2–5 min).",
+"Tarefa de casa simples (2–3 min)."
+],
+"duration": "30–50 min",
+"materials": [
+"Macas/assento",
+"Água",
+"Caderno"
+]
+}
+];
+  </script>
+  <script src="app.js" defer></script>
+</body>
+</html>

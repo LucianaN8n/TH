@@ -1,8 +1,6 @@
+
 /*
-  Content-Security-Policy: frame-ancestors 'self' https://*.wix.com https://*.wixsite.com https://*.editorx.io https://*.wixapps.net https://*.wixapp.com https://*.ath.org.br https://app.hotmart.com https://club.hotmart.com https://*.hotmart.com;
-  Referrer-Policy: strict-origin-when-cross-origin
   X-Content-Type-Options: nosniff
-/*
-  Content-Security-Policy: frame-ancestors 'self' https://*.wix.com https://*.wixsite.com https://*.editorx.io https://*.wixapps.net https://*.wixapp.com https://*.ath.org.br https://app.hotmart.com https://club.hotmart.com https://*.hotmart.com;
-  Referrer-Policy: strict-origin-when-cross-origin
-  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: no-referrer-when-downgrade
+  Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; font-src 'self' data:; frame-ancestors 'self' https://*.hotmart.com https://*.hotmart.com.br https://*.hotmartclub.com;

@@ -1,452 +1,614 @@
-// --- Modo embed/local-safe (Wix/Hotmart, mobile incluso)
-const QS = new URLSearchParams(location.search);
-const EMBED = QS.get('embed');                // "wix" | "club" | etc.
-const FORCE_LOCAL = QS.has('noapi');          // ?noapi=1
-const EMBED_SAFE = FORCE_LOCAL || !!EMBED;
 
-// Bloqueia chamadas remotas em embed (evita 504 no mobile/webview)
-(function hardenEmbed() {
-  if (!EMBED_SAFE || !window.fetch) return;
-  const orig = window.fetch.bind(window);
-  const BLOCK = [/\/ns\/mentor-openai/i, /\/ns\/mentor-openai2/i, /\.netlify\/functions/i, /\/api\//i];
-  window.fetch = (input, init) => {
-    const url = typeof input === 'string' ? input : (input && input.url) || '';
-    if (BLOCK.some(rx => rx.test(url))) return Promise.reject(new Error('remote-calls-blocked-in-embed'));
-    return orig(input, init);
+(function(){
+  "use strict";
+
+  const $ = (sel) => document.querySelector(sel);
+  const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+
+  const state = {
+    selected: [], // max 3 (stores names)
+    techniques: (window.__TECHNIQUES__ || []),
   };
-})();
 
-// iOS: evita zoom ao focar inputs
-if (/iP(hone|ad|od)/.test(navigator.userAgent)) {
-  document.documentElement.style.setProperty('--fix-ios-font', '16px');
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('input, textarea, select').forEach(el => el.style.fontSize = 'var(--fix-ios-font)');
-  });
-}
-
-// Nunca use alert() em embed; use um status na tela
-function showError(msg) {
-  console.error(msg);
-  const el = document.getElementById('status') || document.querySelector('[data-status]');
-  if (el) { el.textContent = msg; el.style.color = '#b42318'; }
-}
-
-
-
-
-
-<!doctype html>
-<html lang="pt-BR">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Seu Mentor Hollístico</title>
-  <style>
-    :root{
-      --ink:#0f172a;--muted:#475569;--bg:#f8fafc;--card:#ffffff;--brand:#0d9488;--soft:#e2e8f0;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;background:var(--bg);color:var(--ink);
-      font:400 16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
-    .wrap{max-width:1200px;margin:0 auto;padding:20px}
-    h1{font:700 20px/1.2 system-ui;margin:0 0 18px}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-    .card{background:var(--card);border:1px solid var(--soft);border-radius:14px;padding:16px}
-    .card h2{font:700 16px/1.2 system-ui;margin:0 0 8px}
-    .field{margin:10px 0 12px}
-    .field label{display:block;font:600 13px system-ui;margin-bottom:6px;color:var(--muted)}
-    .field input,.field textarea,.field select{
-      width:100%;padding:10px 12px;border:1px solid var(--soft);border-radius:10px;background:#fff;outline:none
-    }
-    .field textarea{min-height:80px;resize:vertical}
-    .actions{display:flex;gap:10px;flex-wrap:wrap}
-    .btn{appearance:none;border:0;border-radius:12px;padding:10px 14px;font:600 14px system-ui;cursor:pointer}
-    .btn.primary{background:var(--brand);color:#fff}
-    .btn.ghost{background:#fff;border:1px solid var(--soft);color:var(--ink)}
-    .pill{display:inline-block;background:#eef2ff;border:1px solid #c7d2fe;color:#3730a3;margin:4px 6px 0 0;padding:4px 8px;border-radius:999px;font:600 12px system-ui}
-    .mono{white-space:pre-wrap;font-family:ui-monospace,Menlo,Consolas,monospace}
-    .status{font:600 12px system-ui;color:var(--muted);margin-top:6px}
-    .chat{height:200px;overflow:auto;border:1px solid var(--soft);border-radius:10px;padding:10px;background:#fff;margin-top:6px}
-    .bubble{padding:8px 10px;border-radius:12px;margin:6px 0;max-width:85%}
-    .me{background:#ecfeff;border:1px solid #cffafe;align-self:flex-end;margin-left:auto}
-    .ther{background:#f1f5f9;border:1px solid var(--soft)}
-    @media (max-width:980px){.grid{grid-template-columns:1fr}}
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <h1>Seu Mentor Hollístico — <span style="font-weight:600;color:var(--muted)">Instituto Saber Consciente</span></h1>
-    <div class="grid">
-      <div class="card">
-        <h2>Anamnese dinâmica (orientada por Psicanálise)</h2>
-
-        <div class="field"><label>Nome do terapeuta</label>
-          <input id="f_terapeuta" placeholder="Ex.: Luciana"/></div>
-
-        <div class="field"><label>Nome do paciente</label>
-          <input id="f_paciente" placeholder="Ex.: Joana"/></div>
-
-        <div class="field"><label>Data de nascimento</label>
-          <input id="f_nasc" placeholder="DDMMAAAA (aceita sem barras)"/></div>
-
-        <div class="field"><label>Queixa principal</label>
-          <input id="f_queixa" placeholder="Ex.: ansiedade, pânico, compulsão por doce…"/></div>
-
-        <div class="field"><label>1) Teve algum acontecimento marcante perto dessa época?</label>
-          <textarea id="f_q1" placeholder="Trabalho, família, saúde…"></textarea></div>
-
-        <div class="field"><label>2) Como isso atrapalha sua rotina hoje?</label>
-          <textarea id="f_q2"></textarea></div>
-
-        <div class="field"><label>3) Se tivesse que dar um nome pra esse incômodo (nó, peso, fogo), qual seria?</label>
-          <textarea id="f_q3"></textarea></div>
-
-        <div class="field"><label>4) O que surge no corpo nos 2–3 minutos anteriores (respiração/peito/estômago/tensão)?</label>
-          <textarea id="f_q4"></textarea></div>
-
-        <div class="field"><label>5) O que você gostaria de conseguir fazer mais, se esse problema diminuísse?</label>
-          <textarea id="f_q5"></textarea></div>
-
-        <div class="field"><label>Observações/Respostas (livre)</label>
-          <textarea id="f_obs" placeholder="Registre respostas-chave do cliente…"></textarea></div>
-
-        <div class="actions">
-          <button class="btn primary" id="btn_aplicar">Aplicar & Prosseguir</button>
-          <button class="btn ghost" id="btn_limpar">Limpar</button>
-          <span class="status" id="status">Pronto. Preencha e clique em “Aplicar & Prosseguir”.</span>
-        </div>
-
-        <div class="field" style="margin-top:18px">
-          <label>Pergunte ao Psicanalista (tempo real)</label>
-          <div class="chat" id="chat"></div>
-          <div class="actions" style="margin-top:8px">
-            <input id="chat_input" placeholder="Escreva sua pergunta…" style="flex:1;padding:10px 12px;border:1px solid var(--soft);border-radius:10px;background:#fff"/>
-            <button class="btn primary" id="chat_send">Enviar</button>
-          </div>
-          <div class="status" style="margin-top:6px">Respostas adaptativas baseadas na anamnese. Não substituem supervisão.</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>Parecer do Gestor</h2>
-        <div id="parecer" class="mono" style="min-height:110px">—</div>
-
-        <div class="card" style="margin-top:14px">
-          <h2>Plano de ação (30 dias)</h2>
-          <div id="plano" class="mono">Geraremos um plano ao final da anamnese.</div>
-        </div>
-
-        <div class="card" style="margin-top:14px">
-          <h2>Indicação de estudos (módulos do curso)</h2>
-          <div id="mods" class="mono">Recomendações aparecerão aqui.</div>
-          <div id="tags" style="margin-top:6px"></div>
-        </div>
-
-        <div class="actions" style="margin-top:14px">
-          <button class="btn primary" id="btn_pdf">Gerar PDF</button>
-          <button class="btn ghost" id="btn_copiar">Copiar parecer</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-  // ===== Configurações de embed / ambiente seguro (Wix/Hotmart) =====
-  const EMBED = new URLSearchParams(location.search).get('embed'); // "wix" | "club" | null
-  const IS_WIX_SANDBOX = /filesusr\.com$/i.test(location.hostname);
-  const EMBED_SAFE = !!EMBED || IS_WIX_SANDBOX;
-
-  // Bloqueia chamadas remotas em modo embed
-  (function hardenEmbed(){
-    if(!EMBED_SAFE || !window.fetch) return;
-    const of = window.fetch.bind(window);
-    const BLOCK = [/\.netlify\/functions/i,/\/api\//i,/openai/i,/mentor-openai/i];
-    window.fetch = (input, init)=>{
-      const url = typeof input === 'string' ? input : (input && input.url) || '';
-      if(BLOCK.some(rx=>rx.test(url))) return Promise.reject(new Error('remote-calls-blocked-in-embed'));
-      return of(input, init);
-    };
-  })();
-
-  // ===== Helpers =====
-  const $ = sel => document.querySelector(sel);
-  const val = id => (document.getElementById(id).value || '').trim();
-  const setStatus = (msg, isErr=false) => {
-    const s = $('#status'); s.textContent = msg; s.style.color = isErr ? '#b91c1c' : 'var(--muted)';
+  const el = {
+    terapeuta: $("#terapeuta"),
+    cliente: $("#cliente"),
+    nascimento: $("#nascimento"),
+        intensidade: $("#intensidade"),
+    queixa: $("#queixa"),
+    tempo: $("#tempo"),
+    efeitos: $("#efeitos"),
+    obs: $("#obs"),
+    btnSugerir: $("#btnSugerir"),
+    btnLimpar: $("#btnLimpar"),
+    sugestoes: $("#sugestoes"),
+    catalog: $("#tech-catalog"),
+    btnGerar: $("#btnGerar"),
+    report: $("#report"),
+    btnPrint: $("#btnPrint"),
+    btnReset: $("#btnReset"),
+    btnCopiar: $("#btnCopiar"),
+    selCount: $("#selCount"),
   };
-  const setBusy = (on)=>{ $('#btn_aplicar').disabled=on; $('#btn_pdf').disabled=on; };
 
-  // ===== Engine local (sem fetch) =====
-  function readForm(){
-    return {
-      terapeuta: val('f_terapeuta'),
-      paciente: val('f_paciente'),
-      nasc: val('f_nasc'),
-      queixa: val('f_queixa'),
-      q1: val('f_q1'), q2: val('f_q2'), q3: val('f_q3'), q4: val('f_q4'), q5: val('f_q5'),
-      obs: val('f_obs')
+  // ---------- Utils
+  function parseDateFlexible(input){
+    if(!input) return null;
+    let s = String(input).trim();
+
+    // Remove non-digits for compact formats
+    const digits = s.replace(/\D+/g, "");
+    let d, m, y;
+
+    if(/^\d{6}$/.test(digits)){ // ddmmaa
+      d = parseInt(digits.slice(0,2));
+      m = parseInt(digits.slice(2,4));
+      y = parseInt(digits.slice(4,6));
+      y += (y <= 29 ? 2000 : 1900); // window 1930-2029
+    } else if(/^\d{8}$/.test(digits)){ // ddmmaaaa
+      d = parseInt(digits.slice(0,2));
+      m = parseInt(digits.slice(2,4));
+      y = parseInt(digits.slice(4,8));
+    } else {
+      // try Date.parse on normalized separators
+      s = s.replace(/(\d{1,2})[^\d]+(\d{1,2})[^\d]+(\d{2,4})/, "$1/$2/$3");
+      const parts = s.split(/[\/\-\.]/).map(x=>x.trim()).filter(Boolean);
+      if(parts.length === 3){
+        d = parseInt(parts[0]); m = parseInt(parts[1]); y = parseInt(parts[2]);
+        if(y < 100) y += (y <= 29 ? 2000 : 1900);
+      } else {
+        return null;
+      }
+    }
+    const dt = new Date(y, (m-1), d);
+    if(dt && dt.getMonth() === (m-1) && dt.getDate() === d) return dt;
+    return null;
+  }
+
+  function ageFromBirth(dt){
+    if(!dt) return null;
+    const now = new Date();
+    let age = now.getFullYear() - dt.getFullYear();
+    const beforeBirthday = (now.getMonth() < dt.getMonth()) || (now.getMonth() === dt.getMonth() && now.getDate() < dt.getDate());
+    if(beforeBirthday) age--;
+    return age;
+  }
+
+  function htmlesc(s){
+    return String(s || "").replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]));
+  }
+
+  function cleanText(s){
+    return String(s || "").trim().replace(/\s+/g," ");
+  }
+
+  function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+
+  function scrollInto(el){ try{ el.scrollIntoView({behavior:"smooth", block:"start"}); }catch(e){} }
+
+  // ---------- Catalog rendering
+  function renderCatalog(){
+    const days = parseInt(10) || 0;
+    const frag = document.createDocumentFragment();
+    state.techniques.forEach(t => {
+      const div = document.createElement("div");
+      div.className = "tech-item";
+      const lock = /* gating removed */
+
+      const meta = `
+        <div class="meta">
+          ${(t.tags||[]).map(tag=>`<span class="pill">${htmlesc(tag)}</span>`).join("")}
+          
+          <span class="pill">${htmlesc(t.duration)}</span>
+        </div>
+      `;
+
+      const btnAdd = `<button class="btn btn-ghost" data-add="${htmlesc(t.name)}" ${lock?'disabled':''}>${lock?'Bloqueado':'Inserir no plano'}</button>`;
+      const btnView = `<button class="btn btn-ghost" data-view="${htmlesc(t.name)}">Ver detalhes</button>`;
+
+      div.innerHTML = `
+        <div class="name"><b>${htmlesc(t.name)}</b></div>
+        <div class="small">${htmlesc(t.overview)}</div>
+        ${meta}
+        <div class="flex mt8">
+          ${btnAdd}
+          ${btnView}
+        </div>
+      `;
+      frag.appendChild(div);
+    });
+    el.catalog.innerHTML = "";
+    el.catalog.appendChild(frag);
+    updateSelCount();
+  }
+
+  function updateSelCount(){
+    el.selCount.textContent = `${state.selected.length}/3`;
+  }
+
+  function findTechnique(name){
+    return state.techniques.find(t => (t.name || "").toLowerCase() === (name||"").toLowerCase());
+  }
+
+  function toggleSelect(name){
+    const idx = state.selected.findIndex(n => n.toLowerCase() === name.toLowerCase());
+    if(idx >= 0){
+      state.selected.splice(idx,1);
+    }else{
+      if(state.selected.length >= 3){
+        alert("Você já selecionou 3 técnicas. Remova alguma antes de adicionar outra.");
+        return;
+      }
+      state.selected.push(name);
+    }
+    renderSuggestions(); // updates chips
+    updateSelCount();
+  }
+
+  // ---------- Suggestions
+  function suggestFromComplaint(q){
+    const s = (q||"").toLowerCase();
+    // simple keyword-based mapping
+    const buckets = {
+      "ansiedade": ["Mindfulness – Atenção Plena", "Aromaterapia", "Auriculoterapia", "Reiki usui tibetano nível 1 ao mestrado", "Florais de bach", "Cromoterapia"],
+      "insônia": ["Aromaterapia", "Reiki usui tibetano nível 1 ao mestrado", "Cromoterapia", "Mindfulness – Atenção Plena"],
+      "dor": ["Ventosaterapia", "Reflexologia Podal", "Moxaterapia", "Massagem com óleos essenciais", "Fitoterapia"],
+      "estresse": ["Mindfulness – Atenção Plena", "Cristaloterapia", "Cromoterapia", "Aromaterapia"],
+      "depress": ["PNL – Programação Neurolinguística", "Mindfulness – Atenção Plena", "Floral de st germain", "Cristaloterapia"],
+      "prosper": ["Cocriando Prosperidade", "Radiestesia", "Mesa Radiônica Universal", "Soramig astral money reiki"],
+      "relaciona": ["Ho’oponopono", "Constelação com Mesa Radiônica", "PNL – Programação Neurolinguística"],
+      "proteção": ["Limpeza energética", "Radiestesia", "Chakras", "Apometria"],
+      "feminino": ["Reiki do Sagrado Feminino", "Ginecologia natural disponível", "Chakras"],
+      "espiritual": ["Registros akáshicos", "Meditação", "Reiki celestial", "Anjos de Cura"],
+      "medo": ["Florais de bach", "Auriculoterapia", "Reiki usui tibetano nível 1 ao mestrado"],
+      "gastrite": ["Psicossomática", "Mindfulness – Atenção Plena", "Aromaterapia"],
+      "autoestima": ["PNL – Programação Neurolinguística", "Cristaloterapia", "Chakras"]
     };
+    let picks = [];
+    for(const key in buckets){
+      if(s.includes(key)){
+        picks = picks.concat(buckets[key]);
+      }
+    }
+    if(picks.length === 0){
+      // default fallback: show balanced set
+      picks = ["Mindfulness – Atenção Plena", "Reiki usui tibetano nível 1 ao mestrado", "Aromaterapia", "Psicossomática", "Radiestesia"];
+    }
+    // Deduplicate & slice
+    return [...new Set(picks)].slice(0,6);
   }
 
-  function idadeAprox(nasc){
-    const only = nasc.replace(/\D/g,'');
-    if(only.length<4) return null;
-    const ano = only.slice(-4);
-    const y = Number(ano); if(!y || y>2100) return null;
-    const now = new Date().getFullYear();
-    return Math.max(0, now - y);
+  function renderSuggestions(){
+    const cont = el.sugestoes;
+    cont.innerHTML = "";
+    if(state.selected.length || cont.dataset.had){
+      // show selection chips
+      const box = document.createElement("div");
+      box.className = "flex";
+      box.style.flexWrap = "wrap";
+      box.style.gap = "8px";
+      state.selected.forEach(nm => {
+        const chip = document.createElement("span");
+        chip.className = "badge";
+        chip.innerHTML = `<b>${htmlesc(nm)}</b> <button class="btn btn-ghost" data-remove="${htmlesc(nm)}" title="Remover" style="padding:4px 8px;border-radius:999px">×</button>`;
+        box.appendChild(chip);
+      });
+      cont.appendChild(box);
+      cont.dataset.had = "1";
+    }
   }
 
-  function perfis(queixa){
-    const q = (queixa||'').toLowerCase();
-    const has = (k)=>q.includes(k);
+  // ---------- Report generation
+  function generateReport(){
+    const terapeuta = cleanText(el.terapeuta.value);
+    const cliente   = cleanText(el.cliente.value);
+    const nascimento = parseDateFlexible(el.nascimento.value);
+    const idade = ageFromBirth(nascimento);
+    const diasForm = 0;
+    const intensidade = clamp(parseInt(el.intensidade.value || "0", 10) || 0, 0, 10);
+    const queixa = cleanText(el.queixa.value);
+    const tempo = cleanText(el.tempo.value);
+    const efeitos = cleanText(el.efeitos.value);
+    const obs = cleanText(el.obs.value);
 
-    const out = new Set();
+    if(!cliente || !queixa){
+      alert("Preencha pelo menos o nome do cliente e a queixa principal.");
+      return;
+    }
+    if(state.selected.length === 0){
+      alert("Selecione pelo menos 1 técnica (máx. 3).");
+      return;
+    }
 
-    if(/pani(c|co)/.test(q) || has('ansiedade') || has('taquicardia')) out.add('Ansiedade/Pânico');
-    if(has('compuls') || has('doces') || has('alimentar')) out.add('Compulsão/Alimentar');
-    if(has('toc')) out.add('TOC');
-    if(has('tdah')) out.add('TDAH adulto');
-    if(has('luto perinatal')||has('luto')) out.add('Luto/Luto perinatal');
-    if(has('trauma')||has('abuso')||has('tept')||has('pós-trauma')) out.add('Trauma/TEPT');
-    if(has('borderline')||has('tpb')) out.add('Transtorno de Personalidade Borderline');
-    if(has('depend')||has('alcool')||has('drog')||has('jogo')) out.add('Dependências');
-    if(has('conjugal')||has('relacionamento')||has('casal')) out.add('Crise conjugal');
-    if(has('gastrite')||has('dor')||has('psicossom')) out.add('Psicossomática');
+    // Detailed "parecer" with hidden dynamics
+    const hidden = inferHiddenDynamics(queixa, efeitos, intensidade);
+    const plan = buildPlan(state.selected);
 
-    return [...out];
+    const lines = [];
+    lines.push(`<div class="block"><div class="spread"><h2>Relatório — Instituto Saber Consciente</h2><span class="small">${new Date().toLocaleString()}</span></div>`);
+    lines.push(`<p><b>Terapeuta:</b> ${htmlesc(terapeuta || "—")} &nbsp; <b>Cliente:</b> ${htmlesc(cliente)} ${idade?`&nbsp; <b>(${idade} anos)</b>`:""} &nbsp; <b>Nasc.:</b> ${nascimento? nascimento.toLocaleDateString() : "—"}</p>`);
+    lines.push(`<p><b>Queixa:</b> ${htmlesc(queixa)} &nbsp; <b>Intensidade:</b> ${intensidade}/10 &nbsp; <b>Tempo:</b> ${htmlesc(tempo || "—")} </p>`);
+    lines.push(`<p><b>Efeitos:</b> ${htmlesc(efeitos || "—")} &nbsp; <b>Obs.:</b> ${htmlesc(obs || "—")}</p></div>`);
+
+    // Síntese + Formulação
+    lines.push(`<div class="block"><h3>Síntese do Caso</h3><p>${hidden.summary}</p>`);
+    lines.push(`<h3>O que está oculto no comportamento</h3><p>${hidden.hidden}</p>`);
+    lines.push(`<h3>Hipótese Clínica-Energética</h3><ul>${hidden.hypotheses.map(h=>`<li>${htmlesc(h)}</li>`).join("")}</ul></div>`);
+
+    // Técnicas selecionadas (full details)
+    lines.push(`<div class="block"><h3>Técnicas Selecionadas (até 3)</h3>`);
+    state.selected.forEach(nm => {
+      const t = findTechnique(nm);
+      if(!t) return;
+      // gating check
+      if(t.available_after_days && diasForm < t.available_after_days){
+        lines.push(`<div class="hr"></div><p><b>${htmlesc(t.name)}</b> — <span class="small">Bloqueada: disponível após ${/* gating removed */
+        return;
+      }
+      lines.push(`<div class="hr"></div>`);
+      lines.push(`<p><b>${htmlesc(t.name)}</b></p>`);
+      lines.push(`<p>${htmlesc(t.overview)}</p>`);
+      lines.push(`<p><b>Indicações:</b> ${htmlesc((t.indications||[]).join(", "))}</p>`);
+      lines.push(`<p><b>Contraindicações (checar):</b></p><ul>${t.contraindications.map(c=>`<li>${htmlesc(c)}</li>`).join("")}</ul>`);
+      lines.push(`<p><b>Protocolo Básico:</b></p><ol>${t.protocol.map(p=>`<li>${htmlesc(p)}</li>`).join("")}</ol>`);
+      lines.push(`<p><b>Duração média:</b> ${htmlesc(t.duration)} &nbsp; <b>Materiais:</b> ${htmlesc((t.materials||[]).join(", "))}</p>`);
+      lines.push(`<p class="small">Racional clínico: selecionada por coerência com a hipótese energética e objetivos do cliente.</p>`);
+    });
+    lines.push(`</div>`);
+
+    // Plano de Intervenção
+    lines.push(`<div class="block"><h3>Plano de Intervenção (4 etapas)</h3><ol>${plan.steps.map(s=>`<li>${htmlesc(s)}</li>`).join("")}</ol></div>`);
+
+    // Ações para Casa
+    lines.push(`<div class="block"><h3>Ações para Casa (1 semana)</h3><ul>${hidden.home.map(h=>`<li>${htmlesc(h)}</li>`).join("")}</ul></div>`);
+
+    el.report.innerHTML = lines.join("\n");
+    scrollInto(el.report);
   }
 
-  function modulosRecomendados(perfis){
-    const base = [
-      'Psicanálise Clínica','Psicopatologias','Psicanálise Aprofundamento',
-      'Psicanálise Humanista e Herança Emocional','Supervisão de Atendimento e Estudos de Caso',
-      'Psicoterapia Contextual e Breve','Psicoterapia Baseada na Mentalização',
-      'Terapia Cognitiva Baseada em Mindfulness','Terapia Positiva, de Aceitação e Compromisso',
-      'Psicossomática e Metafísica','Logoterapia'
+  function inferHiddenDynamics(queixa, efeitos, intensidade){
+    const s = (queixa||"").toLowerCase() + " " + (efeitos||"").toLowerCase();
+    const H = {
+      summary: "Cliente apresenta queixa focal com impacto em rotinas, sugerindo desequilíbrios entre regulação fisiológica e padrões cognitivo-emocionais.",
+      hidden: "Padrões de controle/evitação podem estar operando nos bastidores, mantendo a ativação interna elevada e reações automáticas.",
+      hypotheses: ["Sistema nervoso em hiperalerta com baixa variabilidade de estados.", "Conflito entre necessidade de segurança e desejo de expansão.", "Ciclo somático-emocional: sintoma como tentativa de regulação."],
+      home: ["Respiração 4-4-6 (5× ao dia): inspire 4s, segure 4s, solte 6s.", "Grounding 5-4-3-2-1 em momentos de gatilho.", "Registro diário 3 linhas: situação → sensação → micro-ação."]
+    };
+
+    if(s.includes("ansiedad")){
+      H.summary = "Quadro de ansiedade com reatividade aumentada e ruminação.";
+      H.hidden = "Excesso de antecipação negativa; mente tenta controlar o incontrolável — corpo reage em alarme.";
+      H.hypotheses = ["Hiperativação simpática + crenças de catastrofização.", "Evitação de desconforto reforçando o ciclo ansioso."];
+      H.home = ["Respiração 4-4-6 (5 séries/dia).", "Exposição interoceptiva leve + reaterramento.", "Higiene do sono: reduzir telas 2h antes e ancorar rotina."];
+    } else if(s.includes("insôni") || s.includes("insoni")){
+      H.summary = "Dificuldades de iniciar/manter sono possivelmente mediadas por hiperalerta e hábitos.";
+      H.hidden = "Ritmo circadiano desorganizado + condicionamento cognitivo ao estímulo cama/sono.";
+      H.hypotheses = ["Hiperalerta noturno por estresse acumulado.", "Associação cama↔ruminação."];
+      H.home = ["Ritual de desaceleração 60min antes do sono.", "Exposição à luz solar manhã (10–15min).", "Respiração 4-7-8 por 3 minutos na cama."];
+    } else if(s.includes("dor")){
+      H.summary = "Dor com componente miofascial/funcional, influenciada por estresse e padrões posturais.";
+      H.hidden = "Ciclo tensão→dor→proteção; desequilíbrio entre esforço e recuperação.";
+      H.hypotheses = ["Sensibilização periférica em pontos-gatilho.", "Falta de variação de movimento + estresse."];
+      H.home = ["Auto-liberação (bola/rolinho) 5–8 min/dia.", "Hidratação e pausa ativa 2× ao dia.", "Calor local suave 10 min conforme orientação."];
+    } else if(s.includes("prosper") || s.includes("dinhe") || s.includes("finance")){
+      H.summary = "Bloqueios de prosperidade com crenças-raiz e conflitos de valor.";
+      H.hidden = "Lealdades invisíveis e scripts familiares limitantes em operação.";
+      H.hypotheses = ["Crença 'não mereço' / 'dinheiro afasta' ativa.", "Incoerência entre propósito e ação diária."];
+      H.home = ["Ritual de gratidão com 3 evidências diárias.", "Micro-ação de oferta/valor em 10 min/dia.", "Afirmação ancorada + visualização 2 min."];
+    } else if(s.includes("relacion")){
+      H.summary = "Padrões relacionais repetitivos gerando conflito/evitação.";
+      H.hidden = "Defesas de controle/placating e fronteiras difusas.";
+      H.hypotheses = ["Scripts de infância replicados em vínculos atuais.", "Evitação de vulnerabilidade autêntica."];
+      H.home = ["Diálogo não-violento (3 etapas) 1×/dia.", "Prática de 'não' gentil 1×/dia.", "Registro: gatilho→necessidade→pedido."];
+    }
+    if(intensidade >= 8){
+      H.hidden += " Há sinais de alta carga; priorizar estabilização e técnicas de regulação antes de intervenções profundas.";
+      H.hypotheses.push("Alta ativação neurovegetativa — intervir com segurança e gradiente.");
+    }
+    return H;
+  }
+
+  function buildPlan(selected){
+    const steps = [
+      "Estabilização: regulação do SNA (respiração 4-4-6, aterramento) + contrato terapêutico.",
+      "Intervenção focal com técnica principal (12–20 min) + suporte secundário conforme resposta.",
+      "Integração: simbolização e ancoragem (registro, gesto-âncora, mantra).",
+      "Follow-up: revisão de métricas (0–10), planejamento de 7 dias e ajustes finos."
     ];
-    const extras = {
-      'TDAH adulto':['Psicoterapia Contextual e Breve','MBCT','Psicanálise Clínica'],
-      'TOC':['Psicopatologias','MBCT','Psicanálise Aprofundamento'],
-      'Ansiedade/Pânico':['MBCT','Contextual/Breve','Psicanálise Clínica'],
-      'Compulsão/Alimentar':['ACT/ACEitação','Contextual/Breve','Psicopatologias'],
-      'Trauma/TEPT':['Psicanálise Aprofundamento','Mentalização','Logoterapia'],
-      'Luto/Luto perinatal':['Logoterapia','Psicanálise Clínica','Humanista/Herança Emocional'],
-      'Transtorno de Personalidade Borderline':['Mentalização','Psicanálise Aprofundamento','Supervisão de Caso'],
-      'Dependências':['Contextual/Breve','ACT','Psicopatologias'],
-      'Crise conjugal':['Psicanálise Sistêmica e da Mulher','Supervisão de Caso','Humanista/Herança Emocional'],
-      'Psicossomática':['Psicossomática e Metafísica','Psicanálise Clínica']
-    };
-    const pick = new Set(base);
-    for(const p of perfis){
-      (extras[p]||[]).forEach(m=>pick.add(m.replace('MBCT','Terapia Cognitiva Baseada em Mindfulness').replace('ACT','Terapia Positiva, de Aceitação e Compromisso')));
+    // personalize by presence of certain techniques
+    const names = selected.map(n=>n.toLowerCase()).join(" | ");
+    if(names.includes("pnl")) steps[1] = "Intervenção PNL: ancoragem + ressignificação + ensaio mental (future pace).";
+    if(names.includes("auriculo")) steps[1] = "Auriculoterapia: pontos Shen Men, Rim, Ansiedade/Insônia + instrução de estímulo em casa.";
+    if(names.includes("reiki")) steps[1] = "Reiki: sequência por chakras; atenção a áreas hiporresponsivas e integração final.";
+    if(names.includes("reflexologia")) steps[1] = "Reflexologia: plexo solar → sistema-alvo → pontos sensíveis (6–8s).";
+    if(names.includes("ventosa")) steps[1] = "Ventosaterapia: estáticas/deslizantes 5–8 min; monitorar tolerância.";
+    return {steps};
+  }
+
+  // ---------- Events
+  function onCatalogClick(e){
+    const add = e.target.getAttribute("data-add");
+    const view = e.target.getAttribute("data-view");
+    const remove = e.target.getAttribute("data-remove");
+    if(add){
+      toggleSelect(add);
     }
-    return [...pick];
+    if(view){
+      const t = findTechnique(view);
+      if(!t) return;
+      const details = [
+        `<b>${htmlesc(t.name)}</b>`,
+        htmlesc(t.overview),
+        `<b>Indicações:</b> ${htmlesc((t.indications||[]).join(", "))}`,
+        `<b>Contraindicações (checar):</b>`,
+        `<ul>${t.contraindications.map(c=>`<li>${htmlesc(c)}</li>`).join("")}</ul>`,
+        `<b>Protocolo Básico:</b>`,
+        `<ol>${t.protocol.map(p=>`<li>${htmlesc(p)}</li>`).join("")}</ol>`,
+        `<b>Duração:</b> ${htmlesc(t.duration)} &nbsp; <b>Materiais:</b> ${htmlesc((t.materials||[]).join(", "))}`
+      ].join("<br/>");
+      alert(stripTags(details).replace(/<br\/?>/g,"\n").replace(/<[^>]*>/g,""));
+    }
+    if(remove){
+      toggleSelect(remove);
+    }
   }
 
-  function gerarParecerLocal(d){
-    const idade = idadeAprox(d.nasc);
-    const tags = perfis(d.queixa);
-    const foco = tags[0]||'Autoconhecimento clínico';
-    const idadeTxt = idade!=null ? ` (~${idade} anos)` : '';
-
-    const oculto = [];
-    if(/controle|perfeito|erra|cert[oa]/i.test(d.q2)) oculto.push('rigidez/controle como tentativa de reduzir angústia');
-    if(/evit|fug/i.test(d.q2+d.q1)) oculto.push('evitação mantém o sintoma (ciclo curto de alívio → reforço)');
-    if(/culpa|vergonh/i.test(d.q2+d.q1)) oculto.push('culpa/autoexigência elevadas → autocrítica crônica');
-    if(/taquic|falta de ar|aperto|tremor/i.test(d.q4)) oculto.push('hipervigilância interoceptiva (interpretação catastrófica de sinais corporais)');
-    if(/gastrite|dor|enxaqueca|psicossom/i.test(d.queixa+d.q4)) oculto.push('somatização de conflito psíquico não simbolizado');
-    if(d.q1 && /perda|falenci|demiss/i.test(d.q1)) oculto.push('evento de perda/ameaça recente como gatilho de regressão ansiosa');
-
-    const parecer =
-`Paciente: ${d.paciente}${idadeTxt}
-Terapeuta: ${d.terapeuta}
-Foco clínico: ${foco}
-
-Formulação psicanalítica
-• Queixa manifesta: ${d.queixa||'—'}
-• Padrões observáveis: ${d.q2||'—'}
-• Atribuição simbólica (“nome do incômodo”): ${d.q3||'—'}
-• Sinais corporais prévios: ${d.q4||'—'}
-${oculto.length?`• Padrões ocultos: ${oculto.join(' ; ')}`:'• Padrões ocultos: —'}
-
-Hipóteses
-1) Conflito entre exigências de controle e afetos evitados.
-2) Circuito de evitação/segurança que mantém o sintoma.
-3) Necessidade de ampliar mentalização e tolerância à incerteza.
-
-Intervenções prioritárias
-• Psicanálise focal com interpretação de defesas e sentido do sintoma.
-• Treino interoceptivo e respiração 4-4-6 + grounding 5-4-3-2-1.
-• Tarefas de exposição graduada a situações evitadas, com validação emocional.
-• Registro de evidências (texto breve, após episódios).
-• Acordo de linguagem: “o corpo está sinalizando algo que podemos traduzir”.`;
-
-    const plano =
-`Semana 1 — Estabilização
-• Cartão de crise (respira 4-4-6 ×5 + grounding 5-4-3-2-1 + micro-ação).
-• Diálogo interno compassivo: 2x/dia (2–3 min).
-• Sono/rotina: horário fixo; reduzir cafeína após 15h.
-
-Semana 2 — Exposição + reforço positivo
-• Escolher 1 situação evitada e quebrar em micro-passos.
-• Após cada passo: autodiálogo + recompensa saudável.
-• Registrar evidências contra catastrofismos.
-
-Semana 3 — Consolidação
-• Subir 1 ponto na hierarquia (quando tolerável).
-• 1 conversa estruturada/semana usando CNV (observar, sentir, precisar, pedir).
-• Revisar crenças centrais por escrito (“se eu não controlar, serei rejeitado?”) → gerar alternativas.
-
-Semana 4 — Prevenção de recaída
-• Plano de escada: sinais precoces → resposta rápida (3 ações de 2 minutos).
-• Check-in semanal com o terapeuta para ajuste fino.
-• Ritual de fechamento: carta reconhecendo progressos + próximos 14 dias.`;
-
-    return { parecer, plano, tags, mods: modulosRecomendados(tags) };
+  function stripTags(html){
+    const tmp = document.createElement("div");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || "";
   }
 
-  function renderAll(r){
-    $('#parecer').textContent = r.parecer;
-    $('#plano').textContent = r.plano;
-    $('#mods').textContent = r.mods.join(' • ');
-    const t = $('#tags'); t.innerHTML='';
-    r.tags.forEach(x=>{
-      const s = document.createElement('span'); s.className='pill'; s.textContent=x; t.appendChild(s);
+  function onSuggestClick(){
+    const q = el.queixa.value || "";
+    const picks = suggestFromComplaint(q);
+    const days = parseInt(10) || 0;
+    el.sugestoes.innerHTML = "";
+    const box = document.createElement("div");
+    box.className = "flex";
+    box.style.flexWrap = "wrap";
+    box.style.gap = "8px";
+
+    picks.forEach(name => {
+      const t = findTechnique(name);
+      if(!t) return;
+      const lock = /* gating removed */
+      const btn = document.createElement("button");
+      btn.className = "btn btn-ghost";
+      btn.textContent = lock ? `${t.name} (bloq.)` : t.name;
+      btn.disabled = !!lock;
+      btn.addEventListener("click", ()=> toggleSelect(t.name));
+      box.appendChild(btn);
+    });
+    el.sugestoes.appendChild(box);
+    el.sugestoes.dataset.had = "1";
+    updateSelCount();
+  }
+
+  function onClearSelection(){
+    state.selected = [];
+    renderSuggestions();
+    updateSelCount();
+  }
+
+  function onPrint(){
+    window.print();
+  }
+
+  function onReset(){
+    if(confirm("Limpar o relatório e o formulário?")){
+      el.report.innerHTML = `<div class="notice">Relatório limpo. Preencha à esquerda e gere novamente.</div>`;
+      el.terapeuta.value = "";
+      el.cliente.value = "";
+      el.nascimento.value = "";
+      el.diasFormacao.value = "";
+      el.intensidade.value = "";
+      el.queixa.value = "";
+      el.tempo.value = "";
+      el.efeitos.value = "";
+      el.obs.value = "";
+      state.selected = [];
+      renderCatalog();
+      renderSuggestions();
+      updateSelCount();
+      window.scrollTo({top:0, behavior:"smooth"});
+    }
+  }
+
+  function onCopy(){
+    const text = stripTags(el.report.innerHTML).replace(/\n{3,}/g, "\n\n");
+    navigator.clipboard.writeText(text).then(()=>{
+      alert("Relatório copiado para a área de transferência.");
+    }).catch(()=>{
+      // fallback
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try{ document.execCommand("copy"); alert("Relatório copiado."); }catch(e){ alert("Copie manualmente."); }
+      document.body.removeChild(ta);
     });
   }
 
-  async function aplicar(){
-    try{
-      setBusy(true); setStatus('Gerando parecer…');
-      const r = gerarParecerLocal(readForm());
-      renderAll(r);
-      setStatus('Pronto!');
-    }catch(e){
-      console.error(e); setStatus('Falha ao gerar parecer: '+(e?.message||'erro'), true);
-    }finally{ setBusy(false); }
+  // ---------- Init
+  function init(){
+    el.catalog.addEventListener("click", onCatalogClick);
+    el.btnSugerir.addEventListener("click", onSuggestClick);
+    el.btnLimpar.addEventListener("click", onClearSelection);
+    el.btnGerar.addEventListener("click", generateReport);
+    el.btnPrint.addEventListener("click", onPrint);
+    el.btnReset.addEventListener("click", onReset);
+    el.btnCopiar.addEventListener("click", onCopy);
+
+    renderCatalog();
+    renderSuggestions();
   }
 
-  // ===== Chat adaptativo =====
-  const chatBox = $('#chat');
-  const say = (txt, who='ther')=>{
-    const b = document.createElement('div');
-    b.className = 'bubble '+(who==='me'?'me':'ther'); b.textContent = txt;
-    chatBox.appendChild(b); chatBox.scrollTop = chatBox.scrollHeight;
+  document.addEventListener("DOMContentLoaded", init);
+
+})();
+
+
+// ------- Minimal PDF writer (single-page text) -------
+// Creates a basic PDF (A4, portrait) with Helvetica, 12pt, left-aligned, line-wrapped.
+// No eval, no external libs.
+const PDF = (function(){
+  function makeObject(id, content){ return id + " 0 obj\n" + content + "\nendobj\n"; }
+
+  function escapeText(s){
+    return s.replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
+  }
+
+  function wrapLines(text, maxChars){
+    const words = text.split(/\s+/);
+    const lines = [];
+    let cur = "";
+    words.forEach(w=>{
+      if((cur + " " + w).trim().length > maxChars){
+        if(cur) lines.push(cur);
+        cur = w;
+      } else {
+        cur = (cur ? cur + " " + w : w);
+      }
+    });
+    if(cur) lines.push(cur);
+    return lines;
+  }
+
+  function toTextLines(raw){
+    // Split by newlines and wrap each paragraph
+    const paras = raw.split(/\r?\n/).map(s=>s.trimEnd());
+    const lines = [];
+    paras.forEach(p=>{
+      if(p === "") { lines.push(""); return; }
+      const wrapped = wrapLines(p, 95);
+      wrapped.forEach(l=>lines.push(l));
+    });
+    return lines;
+  }
+
+  function generate(text){
+    const lines = toTextLines(text);
+    const lineHeight = 14; // pt
+    const fontSize = 12;
+    const pageWidth = 595.28;  // A4 width pt
+    const pageHeight = 841.89; // A4 height pt
+    const margin = 36; // 0.5 inch
+    const maxLinesPerPage = Math.floor((pageHeight - 2*margin) / lineHeight);
+
+    // Split into pages
+    const pages = [];
+    for(let i=0; i<lines.length; i += maxLinesPerPage){
+      pages.push(lines.slice(i, i+maxLinesPerPage));
+    }
+    if(pages.length === 0) pages.push(["(vazio)"]);
+
+    let objects = [];
+    let objId = 1;
+
+    // Font object
+    const fontObjId = objId++; // 1
+    objects.push(makeObject(fontObjId, "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>"));
+
+    // Pages root and individual pages
+    const kids = [];
+    const pageObjIds = [];
+    const contentObjIds = [];
+
+    pages.forEach((pageLines, pageIndex)=>{
+      // Build content stream
+      let stream = "BT\n/F1 " + fontSize + " Tf\n";
+      let y = pageHeight - margin;
+      stream += "1 0 0 1 " + margin + " " + (y) + " Tm\n";
+      pageLines.forEach((ln, idx)=>{
+        if(idx === 0){
+          stream += "(" + escapeText(ln) + ") Tj\n";
+        } else {
+          stream += "0 -" + lineHeight + " Td\n(" + escapeText(ln) + ") Tj\n";
+        }
+      });
+      stream += "ET";
+      const streamData = stream.encode ? stream.encode() : stream; // compatibility
+
+      const contentObjId = objId++;
+      const content = ("<< /Length " + len(streamData) + " >>\nstream\n" + stream + "\nendstream");
+      objects.push(makeObject(contentObjId, content));
+      contentObjIds.push(contentObjId);
+
+      const pageObjId = objId++;
+      const pageDict = "<< /Type /Page /Parent 0 0 R /MediaBox [0 0 " + pageWidth + " " + pageHeight + "] /Resources << /Font << /F1 " + fontObjId + " 0 R >> >> /Contents " + contentObjId + " 0 R >>";
+      // Parent will be filled after pages root is known
+      objects.push(makeObject(pageObjId, pageDict));
+      pageObjIds.push(pageObjId);
+      kids.push(pageObjId + " 0 R");
+    });
+
+    // Pages root
+    const pagesObjId = objId++;
+    const pagesDict = "<< /Type /Pages /Kids [ " + kids.join(" ") + " ] /Count " + pages.length + " >>";
+    # objects.append(makeObject(pagesObjId, pagesDict))  # We'll fix Parent refs next
+
+    # Fix Parent references inside each Page object (replace 0 0 R with actual id)
+    fixed_objects = []
+    for o in objects:
+        if "/Parent 0 0 R" in o:
+            o = o.replace("/Parent 0 0 R", f"/Parent {pagesObjId} 0 R")
+        fixed_objects.append(o)
+    objects = fixed_objects
+    objects.append(makeObject(pagesObjId, pagesDict))
+
+    # Catalog
+    catalogObjId = objId
+    objId += 1
+    objects.append(makeObject(catalogObjId, f"<< /Type /Catalog /Pages {pagesObjId} 0 R >>"))
+
+    # Assemble xref
+    pdf = "%PDF-1.4\n"
+    offsets = []
+    for obj in objects:
+        offsets.append(len(pdf.encode('latin1', 'ignore')))
+        pdf += obj
+    xref_pos = len(pdf.encode('latin1', 'ignore'))
+    xref = "xref\n0 " + str(len(objects)+1) + "\n0000000000 65535 f \n"
+    for off in offsets:
+        xref += f"{off:010d} 00000 n \n"
+    trailer = f"trailer\n<< /Size {len(objects)+1} /Root {catalogObjId} 0 R >>\nstartxref\n{xref_pos}\n%%EOF"
+
+    pdf += xref + trailer
+    return pdf;
+  }
+
+  function len(s){ return (new TextEncoder()).encode(String(s)).length; }
+
+  function download(filename, data){
+    const blob = new Blob([data], {type: "application/pdf"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+  }
+
+  return {
+    generateAndDownload: function(filename, textContent){
+      const pdf = generate(textContent);
+      download(filename, pdf);
+    }
   };
-  const QROT = [
-    // Rotaciona dicas sem repetir
-    d => `Vamos destrinchar um episódio recente. Onde estava? Com quem? O que seu corpo fez? O que pensou? E o que fez em seguida? Eu devolvo formulação + próximo passo.`,
-    d => `Olho clínico aqui: qual foi o primeiro gatilho visível (lugar, pessoa, pensamento, sensação)? Me descreva um em 4 linhas.`,
-    d => `Se o corpo pudesse falar, o que ele diria antes do pico? Dê falas ao peito/estômago (“estou tentando te proteger de…”).`,
-  ];
-  let qPtr = 0;
-  function nextPrompt(d){
-    const p = QROT[qPtr%QROT.length](d); qPtr++; return p;
-  }
+})();
 
-  function replyChat(msg){
-    const d = readForm();
-    const m = (msg||'').toLowerCase();
 
-    // respostas específicas
-    if(/pregabalin|pregabalina|rivotril|clonazepam/.test(m)){
-      return 'Anote: uso de medicação atual. Se houver sedação/rebote, ajuste de higiene do sono e micro-exposições com tempo curto ajudam a não associar 100% o alívio ao fármaco. Coordene mudanças com o médico.';
-    }
-    if(/p[aâ]nico|crise/.test(m)){
-      return 'Protocolo de crise: 4-4-6 ×5 + grounding 5-4-3-2-1 + micro-ação de 60–120s. Depois, escreva 3 evidências que contrariem o pensamento catastrófico.';
-    }
-    if(/compul|doce|alimentar/.test(m)){
-      return 'Para compulsão: plano ABC (antecedente→comportamento→consequência), atraso de 10min + substituto compatível (andar 5 min, água, ligar para alguém).';
-    }
-    if(/toc/.test(m)){
-      return 'TOC: diferencie “pensamento intrusivo” de intenção. Exposição com prevenção de resposta em degraus, acompanhada de psicanálise focal no sentido do sintoma.';
-    }
-    if(/trauma|tept|abuso/.test(m)){
-      return 'Trauma/TEPT: janela de tolerância primeiro (respiração + interocepção guiada), depois reconsolidação narrativa com segurança relacional. Evite detalhamento sem estabilização.';
-    }
 
-    // default: prompt rotativo vinculado à anamnese
-    return nextPrompt(d);
-  }
-
-  // ===== PDF “Wix-safe” =====
-  async function generatePDF(){
-    const html = `
-      <h1>Seu Mentor Hollístico — Parecer</h1>
-      <h2>Parecer do Gestor</h2><pre>${($('#parecer').textContent||'—')}</pre>
-      <h2>Plano de ação (30 dias)</h2><pre>${($('#plano').textContent||'—')}</pre>
-      <h2>Indicação de estudos (módulos do curso)</h2><pre>${($('#mods').textContent||'—')}</pre>
-    `;
-
-    // jsPDF UMD, se disponível
-    if(window.jspdf?.jsPDF){
-      try{
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF({ unit:'pt', format:'a4' });
-        await doc.html(`<div>${html}</div>`, {
-          x:24,y:24,width:547,windowWidth:900,autoPaging:'text',
-          callback:(d)=>d.save('parecer.pdf')
-        });
-        return;
-      }catch(e){ console.warn('jsPDF falhou; usando impressão via iframe', e); }
-    }
-
-    // Fallback: imprime via iframe oculto (funciona no sandbox do Wix)
+  // PDF Button handler
+  function onPDF(){
+    const text = stripTags(el.report.innerHTML).replace(/\n{3,}/g, "\n\n");
+    const filename = `Relatorio_Terapeuta_Holistico_${(new Date()).toISOString().slice(0,10)}.pdf`;
     try{
-      const iframe = document.createElement('iframe');
-      iframe.style.position='fixed'; iframe.style.right='0'; iframe.style.bottom='0';
-      iframe.style.width='0'; iframe.style.height='0'; iframe.style.border='0';
-      document.body.appendChild(iframe);
-      const idoc = iframe.contentDocument || iframe.contentWindow.document;
-      idoc.open();
-      idoc.write(`<!doctype html><html><head><meta charset="utf-8">
-        <title>Parecer</title>
-        <style>@page{size:A4;margin:16mm}
-        body{font:400 12pt/1.45 system-ui; color:#111; padding:0 8mm 8mm}
-        h1{font:700 18pt;margin:0 0 8pt} h2{font:700 13pt;margin:12pt 0 6pt}
-        pre{white-space:pre-wrap;font-family:ui-monospace,Menlo,Consolas,monospace}</style>
-      </head><body>${html}</body></html>`);
-      idoc.close();
-      setTimeout(()=>{ iframe.contentWindow.focus(); iframe.contentWindow.print(); document.body.removeChild(iframe); }, 350);
-      return;
-    }catch(e){ console.error(e); }
-
-    // Último recurso
-    const w = window.open('', '_blank');
-    if(!w) return;
-    w.document.write(`<!doctype html><meta charset="utf-8"><title>Parecer</title>${html}`);
-    w.document.close(); try{ w.focus(); w.print(); }catch{}
+      PDF.generateAndDownload(filename, text);
+    }catch(e){
+      alert("Não consegui gerar o PDF interno. Você ainda pode usar Imprimir/Salvar PDF.");
+      console.error(e);
+    }
   }
+  el.btnPDF.addEventListener("click", onPDF);
 
-  // ===== Ações =====
-  $('#btn_aplicar').addEventListener('click', aplicar);
-  $('#btn_limpar').addEventListener('click', ()=>{
-    ['f_terapeuta','f_paciente','f_nasc','f_queixa','f_q1','f_q2','f_q3','f_q4','f_q5','f_obs']
-    .forEach(id=>document.getElementById(id).value='');
-    $('#parecer').textContent='—'; $('#plano').textContent=''; $('#mods').textContent=''; $('#tags').innerHTML='';
-    setStatus('Pronto. Preencha e clique em “Aplicar & Prosseguir”.');
-  });
-  $('#btn_pdf').addEventListener('click', generatePDF);
-  $('#btn_copiar').addEventListener('click', async ()=>{
-    const blob = `Parecer do Gestor\n\n${$('#parecer').textContent}\n\nPlano de ação (30 dias)\n\n${$('#plano').textContent}\n\nMódulos indicados\n\n${$('#mods').textContent}`;
-    try{ await navigator.clipboard.writeText(blob); setStatus('Parecer copiado!'); }catch{ setStatus('Não foi possível copiar', true); }
-  });
-
-  // Chat
-  $('#chat_send').addEventListener('click', ()=>{
-    const i = $('#chat_input'); const txt = (i.value||'').trim(); if(!txt) return;
-    say(txt, 'me'); const r = replyChat(txt); say(r, 'ther'); i.value='';
-  });
-  $('#chat_input').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); $('#chat_send').click(); } });
-
-  // Mensagem inicial do chat
-  say('Vamos começar focando no aqui-e-agora. Descreva um episódio recente (onde, com quem, corpo, pensamento, ação). Eu devolvo formulação + próximo passo.');
-  </script>
-
-  <!-- (Opcional) jsPDF UMD local/externo: descomente se quiser download direto
-  <script src="/vendor/jspdf.umd.min.js" defer></script>
-  -->
-</body>
-</html>
