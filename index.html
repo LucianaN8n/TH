@@ -8,7 +8,7 @@
   <style>
     :root{--bg:#f7faf9;--paper:#fff;--ink:#1f2937;--muted:#6b7280;--accent:#6cc2a6;--accent-2:#9dc8e2;--border:#e5e7eb}
     *{box-sizing:border-box} html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif}
-    .container{max-width:1050px;margin:24px auto;padding:0 16px}
+    .container{max-width:1100px;margin:24px auto;padding:0 16px}
     .header{display:flex;gap:16px;align-items:center;margin-bottom:16px}
     .header img{height:56px}.header .title h1{margin:0;font-size:20px}.header .title p{margin:0;color:var(--muted)}
     .card{background:var(--paper);border:1px solid var(--border);border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,.04)}
@@ -21,6 +21,7 @@
     .btn{border:none;border-radius:12px;padding:12px 14px;font-weight:700;cursor:pointer}
     .btn-primary{background:linear-gradient(180deg,var(--accent),var(--accent-2));color:#083344}
     .btn-ghost{background:#fff;border:1px solid var(--border);color:#0f172a}
+    .btn-line{display:inline-flex;gap:8px;flex-wrap:wrap}
     pre#report{min-height:520px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;white-space:pre-wrap;word-wrap:break-word}
     footer{margin:24px 0 40px;color:#6b7280;font-size:12px}
   </style>
@@ -51,7 +52,7 @@
           <div><label>Tempo de sintomas</label><input id="tempo" placeholder="ex.: 6 meses, 2 anos"></div>
         </div>
         <div class="input-row" style="margin-top:8px">
-          <div><label>Padrões/efeitos</label><input id="efeitos" placeholder="ex.: gastrite, cefaleia, tensão, tristeza…"></div>
+          <div><label>Padrões/efeitos</label><input id="efeitos" placeholder="ex.: gastrite, cefaleia, tristeza… (medicações/comorbidades aqui)"></div>
           <div>
             <label>Atendimento</label>
             <select id="modo">
@@ -61,9 +62,14 @@
           </div>
         </div>
 
-        <div style="margin-top:16px">
+        <div class="btn-line" style="margin-top:16px">
           <button id="btnGerar" class="btn btn-primary">Gerar Parecer (Gestor)</button>
           <button id="btnReset" class="btn btn-ghost">Limpar</button>
+          <button id="btnSalvarModelo" class="btn btn-ghost">Salvar modelo…</button>
+          <select id="selModelos" class="btn btn-ghost" style="padding:10px 12px">
+            <option value="">Carregar modelo…</option>
+          </select>
+          <button id="btnCSV" class="btn btn-ghost">Exportar CSV</button>
         </div>
       </div></div>
 
