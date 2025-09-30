@@ -17,7 +17,7 @@
       </div>
       <div class="input-row" style="margin-top:8px">
         <div><label>Data de Nascimento</label><input id="nascimento" placeholder="ddmmaaaa ou dd/mm/aaaa"/></div>
-        <div><label>Intensidade da queixa (0–10)</label><input id="intensidade" type="number" min="0" max="10"/></div>
+        <div><label>Intensidade da queixa (0–10)</label><input id="intensidade" type="number" min="0" max="10" placeholder="6"/></div>
       </div>
       <div class="section-title" style="margin-top:16px">Queixa e Padrões</div>
       <div class="input-row">
@@ -25,8 +25,8 @@
         <div><label>Tempo de sintomas</label><input id="tempo" placeholder="ex.: 6 meses"/></div>
       </div>
       <div class="input-row" style="margin-top:8px">
-        <div><label>Padrões/efeitos</label><input id="efeitos" placeholder="ex.: gastrite, tensão"/></div>
-        <div><label>Observações</label><input id="obs" placeholder="histórico, medicação"/></div>
+        <div><label>Padrões/efeitos</label><input id="efeitos" placeholder="ex.: gastrite, tensão, cefaleia"/></div>
+        <div><label>Observações</label><input id="obs" placeholder="gatilhos, histórico, medicação"/></div>
       </div>
       <div style="margin-top:16px">
         <button id="btnGerar" class="btn btn-primary">Gerar Parecer (Gestor)</button>
@@ -37,7 +37,6 @@
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div class="section-title">Relatório</div>
         <div class="no-print" style="display:flex;gap:8px">
-          <button id="btnPrint" class="btn btn-ghost">Imprimir/Salvar PDF</button>
           <button id="btnPDF" class="btn btn-primary">Baixar PDF</button>
         </div>
       </div>
